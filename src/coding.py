@@ -9,16 +9,64 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/login_code",methods=['post'])
+def login_code():
+    username=request.form['textfield']
+    password=request.form['textfield2']
+
+    qry="SELECT * FROM login WHERE `username`=%s AND `password`=%s"
+    val=(username,password)
+
+    res=selectone(qry, val)
+    if res is None:
+        return '''<script>alert("Invalid Username or Password");window.location="/"</script>'''
+    elif res['type']=="admin":
+        return '''<script>alert("Welcome Admin");window.location="admin_home"</script>'''
+    elif res['type']=="panchayath":
+        return '''<script>alert("Welcome Panchayath");window.location="panchayath_home"</script>'''
+    elif res['type']=="ashaworker":
+        return '''<script>alert("Welcome Ashaworker");window.location="panchayath_home"</script>'''
+    elif res['type']=="user":
+        return '''<script>alert("Welcome User");window.location="user_home"</script>'''
+
+
 @app.route("/user_registration")
 def user_registration():
     return render_template("user_registration.html")
+
+
+@app.route("/registration_code", methods=['post'])
+def registration_code():
+    name=request.form['textfield']
+    place=request.form['textfield2']
+    post=request.form['textfield3']
+    pin=request.form['textfield4']
+    panchayath=request.form['panchayath']
+    area=request.form['select']
+    ph_no=request.form['textfield5']
+    email=request.form['textfield6']
+    pregnant=request.form['select2']
+    number_of_child=request.form['child']
+    latitude=request.form['textfield7']
+    longitude=request.form['textfield8']
+    username=request.form['textfield9']
+    password=request.form['textfield10']
+
+    qry = "INSERT INTO login VALUES(NULL,%s,%s,'pending')"
+    id = iud(qry,(username,password))
+
+    qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    iud(qry,(id,panchayath, name, place, post, pin, area, ph_no, email, number_of_child, pregnant, latitude, longitude))
+
+    return '''<script>alert("Successfully registered");window.location="/"</script>'''
+
 
 #Admin===============================================================================
 
 
 @app.route("/admin_home")
 def admin_home():
-    return render_template("admin_home.html")
+    return render_template("Admin/admin_home.html")
 
 
 @app.route("/add_panchayath")
@@ -49,7 +97,7 @@ def view_report():
 #panchayath==========================================================================
 @app.route("/panchayath_home")
 def panchayath_home():
-    return render_template("panchayath_home.html")
+    return render_template("panchayath/panchayath_home.html")
 
 
 @app.route('/add_ashaworker')
@@ -84,12 +132,12 @@ def manage_food():
 
 @app.route("/manage_panchayath_program")
 def manage_panchayath_program():
-    return render_template("Admin/manage_panchayath_program.html")
+    return render_template("panchayath/manage_panchayath_program.html")
 
 
 @app.route("/manage_vaccination_details")
 def manage_vaccination_details():
-    return render_template("Admin/manage_vaccination_details.html")
+    return render_template("panchayath/manage_vaccination_details.html")
 
 
 @app.route("/view_mothers_details")
@@ -99,7 +147,7 @@ def view_mothers_details():
 #ashaworker============================================================================
 @app.route("/ashaworker_home")
 def ashaworker_home():
-    return render_template("ashaworker_home.html")
+    return render_template("Ashaworker/ashaworker_home.html")
 
 
 @app.route("/add_child")
@@ -128,9 +176,9 @@ def view_programs_schemes():
 
 
 #User===========================================================================
-@app.route("user_home")
+@app.route("/user_home")
 def user_home():
-    return render_template("user_home.html")
+    return render_template("User/user_home.html")
 
 
 @app.route("/view_food_details")
