@@ -14,6 +14,13 @@ def user_registration():
     return render_template("user_registration.html")
 
 #Admin===============================================================================
+
+
+@app.route("/admin_home")
+def admin_home():
+    return render_template("admin_home.html")
+
+
 @app.route("/add_panchayath")
 def add_panchayath():
     return render_template("Admin/add_panchayath.html")
@@ -38,7 +45,13 @@ def manage_scheme():
 def view_report():
     return render_template("Admin/view_report.html")
 
-#panchayath==================================================================================
+
+#panchayath==========================================================================
+@app.route("/panchayath_home")
+def panchayath_home():
+    return render_template("panchayath_home.html")
+
+
 @app.route('/add_ashaworker')
 def add_ashaworker():
     return render_template("panchayath/add_ashaworker.html")
@@ -84,6 +97,11 @@ def view_mothers_details():
     return render_template("Admin/view_mothers_details.html")
 
 #ashaworker============================================================================
+@app.route("/ashaworker_home")
+def ashaworker_home():
+    return render_template("ashaworker_home.html")
+
+
 @app.route("/add_child")
 def add_child():
     return render_template("Ashaworker/add_child.html")
@@ -108,7 +126,13 @@ def verify_users():
 def view_programs_schemes():
     return render_template("Ashaworker/view_programs_schemes.html")
 
+
 #User===========================================================================
+@app.route("user_home")
+def user_home():
+    return render_template("user_home.html")
+
+
 @app.route("/view_food_details")
 def view_food_details():
     return render_template("User/view_food_details.html")
@@ -122,5 +146,6 @@ def view_programs_and_schemes():
 @app.route("/view_vaccine_details")
 def view_vaccine_details():
     return render_template("User/view_vaccine_details.html")
+
 
 app.run(debug=True)
