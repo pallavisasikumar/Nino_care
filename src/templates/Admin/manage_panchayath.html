@@ -16,15 +16,21 @@
       <th scope="col">Email</th>
       <th scope="col">&nbsp;</th>
     </tr>
+
+    {% for i in val %}
+
     <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
+      <td>{{i['name']}}</td>
+      <td>{{i['taluk_name']}}</td>
+      <td>{{i['district']}}</td>
+      <td>{{i['ph_no']}}</td>
+      <td>{{i['email']}}</td>
       <td><p><a href="#">Edit</a></p>
       <p><a href="#">Delete</a></p></td>
     </tr>
+
+    {% endfor %}
+
     <tr>
       <td colspan="6"><label>
         <input type="submit" name="Submit" value="ADD" />

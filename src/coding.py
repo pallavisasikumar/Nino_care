@@ -3,6 +3,7 @@ from src.dbconnection import *
 
 app = Flask(__name__)
 
+app.secret_key = "651283481564283"
 
 @app.route('/')
 def login():
@@ -21,12 +22,16 @@ def login_code():
     if res is None:
         return '''<script>alert("Invalid Username or Password");window.location="/"</script>'''
     elif res['type']=="admin":
+        session['lid'] = res['id']
         return '''<script>alert("Welcome Admin");window.location="admin_home"</script>'''
     elif res['type']=="panchayath":
+        session['lid'] = res['id']
         return '''<script>alert("Welcome Panchayath");window.location="panchayath_home"</script>'''
     elif res['type']=="ashaworker":
+        session['lid'] = res['id']
         return '''<script>alert("Welcome Ashaworker");window.location="panchayath_home"</script>'''
     elif res['type']=="user":
+        session['lid'] = res['id']
         return '''<script>alert("Welcome User");window.location="user_home"</script>'''
 
 
@@ -37,7 +42,7 @@ def user_registration():
 
 @app.route("/registration_code", methods=['post'])
 def registration_code():
-    name=request.form['textfield']
+    name = request.form['textfield']
     place=request.form['textfield2']
     post=request.form['textfield3']
     pin=request.form['textfield4']
@@ -81,17 +86,37 @@ def add_scheme():
 
 @app.route("/manage_panchayath")
 def manage_panchayath():
-    return render_template("Admin/manage_panchayath.html")
+    qry = "SELECT * FROM `panchayath`"
+    res = selectall(qry)
+    # print(res) (just to check if the code works)
+    return render_template("Admin/manage_panchayath.html", val = res)
 
 
 @app.route("/manage_scheme")
 def manage_scheme():
-    return render_template("Admin/manage_scheme.html")
+    qry = "SELECT * FROM `gov_schemes`"
+    res = selectall(qry)
+    # print(res) (just to check if the code works)
+    return render_template("Admin/manage_scheme.html",val=res)
 
 
 @app.route("/view_report")
 def view_report():
-    return render_template("Admin/view_report.html")
+    qry="SELECT panchayath.name,reports.* FROM panchayath JOIN reports ON panchayath.l_id=reports.panchayath_id"
+    res=selectall(qry)
+    return render_template("Admin/view_report.html",val=res)
+
+
+@app.route("/add_food_details")
+def add_food_details():
+    return render_template("Admin/add_food_details.html")
+
+
+@app.route("/manage_food")
+def manage_food():
+    qry = "SELECT * FROM food"
+    res = selectall(qry)
+    return render_template("Admin/manage_food.html",val=res)
 
 
 #panchayath==========================================================================
@@ -103,11 +128,6 @@ def panchayath_home():
 @app.route('/add_ashaworker')
 def add_ashaworker():
     return render_template("panchayath/add_ashaworker.html")
-
-
-@app.route("/add_food_details")
-def add_food_details():
-    return render_template("panchayath/add_food_details.html")
 
 
 @app.route("/add_program")
@@ -122,17 +142,18 @@ def add_vaccine_details():
 
 @app.route("/manage_ashaworker")
 def manage_ashaworker():
-    return render_template("panchayath/manage_ashaworker.html")
-
-
-@app.route("/manage_food")
-def manage_food():
-    return render_template("panchayath/manage_food.html")
-
+    qry = "SELECT * FROM `ashaworker` WHERE `panchayath_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/manage_ashaworker.html",val=res)
 
 @app.route("/manage_panchayath_program")
 def manage_panchayath_program():
     return render_template("panchayath/manage_panchayath_program.html")
+
+
+@app.route("/view_food")
+def view_food():
+    return render_template("panchayath/view_food.html")
 
 
 @app.route("/manage_vaccination_details")

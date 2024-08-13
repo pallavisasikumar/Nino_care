@@ -12,11 +12,13 @@
     <th scope="col">Report</th>
     <th scope="col">Date</th>
   </tr>
+  {% for i in val %}
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>{{i['name']}}</td>
+    <td><a href="../static/uploads/{{i['report']}}"> {{i['report']}}</a></td>
+    <td>{{i['date']}}</td>
   </tr>
+  {% endfor %}
 </table>
 </body>
 </html>

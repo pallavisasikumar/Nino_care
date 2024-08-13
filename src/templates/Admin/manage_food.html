@@ -9,35 +9,30 @@
 <form id="form1" name="form1" method="post" action="">
   <table width="200" border="1">
     <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Post Office </th>
-      <th scope="col">Place</th>
-      <th scope="col">Pincode</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-      <th scope="col">Area</th>
+      <th scope="col">Food</th>
+      <th scope="col">Details</th>
+      <th scope="col">Image</th>
+      <th scope="col">Type</th>
       <th scope="col">&nbsp;</th>
     </tr>
-    {% for i in val %}
+    {% for i in val%}
     <tr>
-      <td>{{i['name']}}</td>
-      <td>{{i['post']}}</td>
-      <td>{{i['place']}}</td>
-      <td>{{i['pin']}}</td>
-      <td>{{i['email']}}</td>
-      <td>{{i['ph_no']}}</td>
-      <td>{{i['area']}}</td>
+      <td>{{i['food']}}</td>
+      <td>{{i['details']}}</td>
+      <td><img src="../static/uploads/{{i['image']}}" width="100px" height="100px"></td>
+      <td>{{i['type']}}</td>
       <td><p><a href="#">Edit</a></p>
       <p><a href="#">Delete</a></p></td>
     </tr>
+
     {% endfor %}
+
     <tr>
-      <td colspan="8"><label>
-        <input type="submit" name="Submit" value="ADD" />
+      <td colspan="5"><label>
+        <input type="submit" name="Submit" value="Add" />
       </label></td>
     </tr>
   </table>
-  <label></label>
 </form>
 </body>
 </html>
