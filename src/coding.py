@@ -74,12 +74,42 @@ def admin_home():
     return render_template("Admin/admin_home.html")
 
 
-@app.route("/add_panchayath")
+@app.route("/add_panchayath", methods=['post'])
 def add_panchayath():
     return render_template("Admin/add_panchayath.html")
 
 
-@app.route("/add_scheme")
+@app.route("/insert_panchayath", methods=["post"])
+def insert_panchayath():
+    name = request.form["textfield"]
+    taluk_name = request.form["textfield2"]
+    district = request.form["textfield3"]
+    ph_no = request.form["textfield4"]
+    email = request.form["textfield5"]
+    username = request.form["textfield6"]
+    password = request.form["textfield7"]
+
+    qry = "INSERT INTO login VALUES(NULL,%s,%s,'panchayath')"
+    id = iud(qry,(username,password))
+
+    qry = "INSERT INTO panchayath VALUES(NULL,%s,%s,%s,%s,%s,%s)"
+    iud(qry,(id, name, taluk_name, district, ph_no, email))
+
+    return '''<script>alert("Successfully Inserted Panchayath");window.location="manage_panchayath"</script>'''
+
+
+@app.route("/insert_scheme", methods=["post"])
+def insert_scheme():
+    name = request.form["textfield"]
+    details = request.form["textfield2"]
+
+    qry = "INSERT INTO `gov_schemes` VALUES(NULL,%s,%s,CURDATE())"
+    val =  (name, details)
+    iud(qry,val)
+    return '''<script>alert("Success");window.location="manage_scheme"</script>'''
+
+
+@app.route("/add_scheme",methods=["post"])
 def add_scheme():
     return render_template("Admin/add_scheme.html")
 
@@ -107,9 +137,21 @@ def view_report():
     return render_template("Admin/view_report.html",val=res)
 
 
-@app.route("/add_food_details")
+@app.route("/add_food_details",methods=["post"])
 def add_food_details():
     return render_template("Admin/add_food_details.html")
+
+
+@app.route("/insert_food",methods=["post"])
+def insert_food():
+    food = request.form["textfield"]
+    image = request.files["file1"]
+    details = request.form["textfield2"]
+    consumer_type = request.form["select"]
+    qry = "INSERT INTO food VALUES(NULL,%s,%s,%s,%s)"
+    val = (food,image,details,consumer_type)
+    iud(qry, val)
+    return '''<script>alert("added food details");window.location="manage_food"</script>'''
 
 
 @app.route("/manage_food")
