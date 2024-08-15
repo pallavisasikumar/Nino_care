@@ -1,5 +1,7 @@
 from flask import *
 from src.dbconnection import *
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
@@ -148,8 +150,13 @@ def insert_food():
     image = request.files["file1"]
     details = request.form["textfield2"]
     consumer_type = request.form["select"]
+
+    image_name = secure_filename(image.filename)
+    image.save(os.path.join('static/uploads',image_name))
+
+
     qry = "INSERT INTO food VALUES(NULL,%s,%s,%s,%s)"
-    val = (food,image,details,consumer_type)
+    val = (food,image_name,details,consumer_type)
     iud(qry, val)
     return '''<script>alert("added food details");window.location="manage_food"</script>'''
 
