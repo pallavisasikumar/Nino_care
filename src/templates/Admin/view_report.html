@@ -1,19 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
-</head>
+{% extends "Admin/admin_index.html" %}
+{% block body %}
+
 
 <body>
-<table width="200" border="1">
+<table width="200" border="1" class="table table-bordered table-hover table-striped">
   <tr>
     <th scope="col">Panchayath Name </th>
     <th scope="col">Report</th>
     <th scope="col">Date</th>
   </tr>
   {% for i in val %}
-  <tr>
+  <tr align="center">
     <td>{{i['name']}}</td>
     <td><a href="../static/uploads/{{i['report']}}"> {{i['report']}}</a></td>
     <td>{{i['date']}}</td>
@@ -21,4 +18,4 @@
   {% endfor %}
 </table>
 </body>
-</html>
+{% endblock %}

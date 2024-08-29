@@ -9,7 +9,7 @@ app.secret_key = "651283481564283"
 
 @app.route('/')
 def login():
-    return render_template("login.html")
+    return render_template("login_index.html")
 
 
 @app.route("/login_code",methods=['post'])
@@ -73,7 +73,7 @@ def registration_code():
 
 @app.route("/admin_home")
 def admin_home():
-    return render_template("Admin/admin_home.html")
+    return render_template("Admin/admin_index.html")
 
 
 @app.route("/add_panchayath", methods=['post'])
