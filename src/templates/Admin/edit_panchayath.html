@@ -1,0 +1,45 @@
+{% extends "Admin/admin_index.html" %}
+{% block body %}
+
+<body>
+<form id="form1" name="form1" method="post" action="update_panchayath">
+  <table width="200" border="1" class="table table-bordered table-hover table-striped">
+    <tr>
+      <th scope="row">Name</th>
+      <td><label>
+        <input type="text" name="textfield" value="{{val['name']}}"/>
+      </label></td>
+    </tr>
+    <tr>
+      <th scope="row">Taluk Name </th>
+      <td><input type="text" name="textfield2" value="{{val['taluk_name']}}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">District</th>
+      <td><input type="text" name="textfield3" value="{{val['district']}}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Phone Number </th>
+      <td><input type="text" name="textfield4" value="{{val['ph_no']}}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Email</th>
+      <td><input type="text" name="textfield5" value="{{val['email']}}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Username </th>
+      <td><input type="text" name="textfield6" value="{{val['username']}}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Password</th>
+      <td><input type="text" name="textfield7" value="{{val['password']}}" /></td>
+    </tr>
+    <tr align="center">
+      <th colspan="2" scope="row"><label>
+        <input type="submit" name="Submit" value="Submit" class="btn btn-primary" />
+      </label></th>
+    </tr>
+  </table>
+</form>
+</body>
+{% endblock %}

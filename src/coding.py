@@ -99,6 +99,45 @@ def insert_panchayath():
 
     return '''<script>alert("Successfully Inserted Panchayath");window.location="manage_panchayath"</script>'''
 
+@app.route("/delete_panchayath")
+def delete_panchayath():
+    id = request.args.get('id')
+    qry = "DELETE FROM `login` WHERE id=%s"
+    iud(qry, id)
+    qry = "DELETE FROM `panchayath` WHERE `l_id`=%s"
+    iud(qry, id)
+
+    return '''<script>alert("Successfully deleted");window.location="manage_panchayath"</script>'''
+
+
+@app.route("/edit_panchayath")
+def edit_panchayath():
+    id = request.args.get('id')
+    session['pid'] = id
+    qry = "SELECT * FROM `panchayath` JOIN `login` ON `panchayath`.`l_id`=`login`.`id` WHERE panchayath.l_id=%s"
+    res = selectone(qry, id)
+    return render_template("Admin/edit_panchayath.html", val = res)
+
+
+@app.route("/update_panchayath" , methods=['post'])
+def update_panchayath():
+    print(request.form)
+    name = request.form["textfield"]
+    taluk_name = request.form["textfield2"]
+    district = request.form["textfield3"]
+    ph_no = request.form["textfield4"]
+    email = request.form["textfield5"]
+    username = request.form["textfield6"]
+    password = request.form["textfield7"]
+
+    qry = "UPDATE `login` SET `username`=%s, `password`=%s WHERE `id`=%s"
+    iud(qry, (username,password,session['pid']))
+
+    qry = "UPDATE `panchayath` SET `name`=%s, `taluk_name`=%s, `district`=%s, `ph_no`=%s, `email`=%s WHERE `l_id`=%s"
+    iud(qry, (name, taluk_name, district, ph_no, email, session['pid']))
+
+    return '''<script>alert("Successfully edited");window.location="manage_panchayath"</script>'''
+
 
 @app.route("/insert_scheme", methods=["post"])
 def insert_scheme():
@@ -109,6 +148,33 @@ def insert_scheme():
     val =  (name, details)
     iud(qry,val)
     return '''<script>alert("Success");window.location="manage_scheme"</script>'''
+
+
+@app.route("/delete_scheme")
+def delete_scheme():
+    id=request.args.get('id')
+    qry="DELETE FROM `gov_schemes` WHERE id=%s"
+    iud(qry,id)
+    return '''<script>alert("Successfully Deleted");window.location="manage_scheme"</script>'''
+
+
+@app.route("/edit_scheme")
+def edit_scheme():
+    id = request.args.get('id')
+    session['sid'] = id
+    qry = "SELECT * FROM`gov_schemes` WHERE id=%s"
+    res = selectone(qry, id)
+    return render_template("Admin/edit_scheme.html" , val=res )
+
+
+@app.route("/update_scheme", methods=['post'])
+def update_scheme():
+    name = request.form["textfield"]
+    details = request.form["textfield2"]
+
+    qry="UPDATE `gov_schemes` SET `scheme_name`=%s, `details`=%s WHERE id=%s"
+    iud(qry,(name,details, session['sid']))
+    return '''<script>alert("Successfully edited");window.location="manage_scheme"</script>'''
 
 
 @app.route("/add_scheme",methods=["post"])
@@ -144,7 +210,7 @@ def add_food_details():
     return render_template("Admin/add_food_details.html")
 
 
-@app.route("/insert_food",methods=["post"])
+@app.route("/insert_food", methods=["post"])
 def insert_food():
     food = request.form["textfield"]
     image = request.files["file1"]
@@ -161,6 +227,52 @@ def insert_food():
     return '''<script>alert("added food details");window.location="manage_food"</script>'''
 
 
+@app.route("/delete_food")
+def delete_food():
+    id=request.args.get('id')
+    qry="DELETE FROM `food` WHERE id=%s"
+    iud(qry,id)
+    return '''<script>alert("Successfully Deleted");window.location="manage_food"</script>'''
+
+
+@app.route("/edit_food")
+def edit_food():
+    id = request.args.get('id')
+    session['fid'] = id
+    qry = "SELECT * FROM `food` WHERE id=%s"
+    res = selectone(qry, id)
+    return render_template("Admin/edit_food_details.html", val=res)
+
+
+@app.route("/update_food", methods=['post'])
+def update_food():
+
+    try:
+        food = request.form["textfield"]
+        image = request.files["file1"]
+        details = request.form["textfield2"]
+        consumer_type = request.form["select"]
+
+        image_name = secure_filename(image.filename)
+        image.save(os.path.join('static/uploads', image_name))
+
+        qry = "UPDATE `food` SET `food`=%s, `image`=%s, `details`=%s, `type`=%s WHERE `id`=%s"
+        val = (food, image_name, details, consumer_type, session['fid'])
+        iud(qry, val)
+        return '''<script>alert("Food details updated");window.location="manage_food"</script>'''
+
+    except:
+        food = request.form["textfield"]
+
+        details = request.form["textfield2"]
+        consumer_type = request.form["select"]
+
+        qry = "UPDATE `food` SET `food`=%s, `details`=%s, `type`=%s WHERE `id`=%s"
+        val = (food, details, consumer_type, session['fid'])
+        iud(qry, val)
+        return '''<script>alert("Successfully edited");window.location="manage_food"</script>'''
+
+
 @app.route("/manage_food")
 def manage_food():
     qry = "SELECT * FROM food"
@@ -174,9 +286,30 @@ def panchayath_home():
     return render_template("panchayath/panchayath_home.html")
 
 
+@app.route("/manage_area")
+def manage_area():
+    qry = "SELECT * FROM `area` WHERE pid=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/manage_area.html", val=res)
+
+
 @app.route('/add_ashaworker')
 def add_ashaworker():
     return render_template("panchayath/add_ashaworker.html")
+
+
+@app.route("/edit_ashaworker")
+def edit_ashaworker():
+    id = request.args.get('id')
+    session['aid'] = id
+    qry = "SELECT * FROM `ashaworker` WHERE l_id= %s"
+    res = selectone(qry, id)
+    return render_template("panchayath/edit_ashaworker.html", val=res)
+
+
+@app.route("/update_ashaworker")
+def update_ashaworker():
+    return '''<script>alert("Susscessfully edited");window.location="manage_ashaworker"</script>'''
 
 
 @app.route("/add_program")
@@ -195,19 +328,26 @@ def manage_ashaworker():
     res = selectall2(qry, session['lid'])
     return render_template("panchayath/manage_ashaworker.html",val=res)
 
+
 @app.route("/manage_panchayath_program")
 def manage_panchayath_program():
-    return render_template("panchayath/manage_panchayath_program.html")
+    qry="SELECT * FROM `programs` WHERE `panchayath_id`=%s"
+    res=selectall2(qry,session['lid'])
+    return render_template("panchayath/manage_panchayath_program.html", val=res)
 
 
 @app.route("/view_food")
 def view_food():
-    return render_template("panchayath/view_food.html")
+    qry = "SELECT * FROM `food`"
+    res = selectall(qry)
+    return render_template("panchayath/view_food.html", val = res)
 
 
 @app.route("/manage_vaccination_details")
 def manage_vaccination_details():
-    return render_template("panchayath/manage_vaccination_details.html")
+    qry="SELECT * FROM `vaccine` WHERE `panchayath_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/manage_vaccination_details.html", val=res)
 
 
 @app.route("/view_mothers_details")

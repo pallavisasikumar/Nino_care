@@ -2,7 +2,7 @@
 {% extends "Admin/admin_index.html" %}
 {% block body %}
 <body>
-<form id="form1" name="form1" method="post" action="add_panchayath">
+<form id="form1" name="form1" method="post" action="add_panchayath#about">
   <table width="200" border="1" class="table table-bordered table-hover table-striped">
     <tr>
       <th scope="col">Name</th>
@@ -21,8 +21,8 @@
       <td>{{i['district']}}</td>
       <td>{{i['ph_no']}}</td>
       <td>{{i['email']}}</td>
-      <td><p><a href="#">Edit</a></p>
-      <p><a href="#">Delete</a></p></td>
+      <td><p><a href="edit_panchayath?id={{i['l_id']}}#about">Edit</a></p>
+      <p><a href="delete_panchayath?id={{i['l_id']}}#about">Delete</a></p></td>
     </tr>
 
     {% endfor %}

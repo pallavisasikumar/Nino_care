@@ -6,7 +6,7 @@
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="">
+<form id="form1" name="form1" method="post" action="add_ashaworker#about">
   <table width="200" border="1">
     <tr>
       <th scope="col">Name</th>
@@ -27,7 +27,7 @@
       <td>{{i['email']}}</td>
       <td>{{i['ph_no']}}</td>
       <td>{{i['area']}}</td>
-      <td><p><a href="#">Edit</a></p>
+      <td><p><a href="edit_ashaworker?id={{i['id']}}">Edit</a></p>
       <p><a href="#">Delete</a></p></td>
     </tr>
     {% endfor %}

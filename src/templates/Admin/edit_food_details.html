@@ -1,0 +1,47 @@
+{% extends "Admin/admin_index.html" %}
+{% block body %}
+
+<body>
+<form id="form1" name="form1" method="post" action="update_food" enctype="multipart/form-data">
+  <table width="200" border="1" class="table table-bordered table-hover table-striped">
+    <tr>
+      <th scope="row">Food</th>
+      <td><label>
+        <input type="text" name="textfield" value="{{val['food']}}"/>
+      </label></td>
+    </tr>
+    <tr>
+      <th scope="row">Details</th>
+      <td><label>
+      <input type="text" name="textfield2" value="{{val['details']}}" />
+      </label></td>
+    </tr>
+    <tr>
+      <th scope="row">Image</th>
+      <td><label>
+      <input type="file" name="file1" />
+
+        <img src="../static/uploads/{{val['image']}}" width="200px" height="200px">
+
+      </label></td>
+    </tr>
+
+    <tr>
+      <th scope="row">Type</th>
+      <td><label>
+        <select name="select">
+          <option>child</option>
+          <option>mother</option>
+          <option>pregnent women</option>
+        </select>
+      </label></td>
+    </tr>
+    <tr align="center">
+      <th colspan="2" scope="row"><label>
+        <input type="submit" name="Submit" value="Submit" class="btn btn-primary" />
+      </label></th>
+    </tr>
+  </table>
+</form>
+</body>
+{% endblock %}
