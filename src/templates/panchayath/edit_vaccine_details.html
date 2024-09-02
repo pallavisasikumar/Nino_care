@@ -6,27 +6,27 @@
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="insert_vaccine_details">
+<form id="form1" name="form1" method="post" action="update_vaccination_details">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="col">Vaccine name </th>
       <th scope="col"><label>
-        <input type="text" name="textfield" />
+        <input type="text" name="textfield" value="{{val['vaccine_name']}}" />
       </label></th>
     </tr>
     <tr>
       <th>Details</th>
       <td><label>
-      <input type="text" name="textfield2" />
+      <input type="text" name="textfield2" value="{{val['details']}}"/>
       </label></td>
     </tr>
     <tr>
       <th>Type</th>
       <td><label>
       <select name="textfield3">
-        <option>Child</option>
-        <option>Mother</option>
-        <option>Pregnent Women</option>
+        <option {% if val['type'] == "Child" %} selected {% endif %} >Child</option>
+        <option {% if val['type'] == "Mother" %} selected {% endif %}>Mother</option>
+        <option {% if val['type'] == "Pregnent Women" %} selected {% endif %}>Pregnent Women</option>
       </select>
       </label></td>
     </tr>

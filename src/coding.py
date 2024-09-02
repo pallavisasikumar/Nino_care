@@ -283,7 +283,7 @@ def manage_food():
 #panchayath==========================================================================
 @app.route("/panchayath_home")
 def panchayath_home():
-    return render_template("panchayath/panchayath_home.html")
+    return render_template("panchayath/panchayath_index.html")
 
 
 @app.route("/manage_area")
@@ -293,9 +293,64 @@ def manage_area():
     return render_template("panchayath/manage_area.html", val=res)
 
 
-@app.route('/add_ashaworker')
+@app.route("/add_area", methods=['post'])
+def add_area():
+    return render_template("panchayath/add_area.html")
+
+
+@app.route("/insert_area", methods=['post'])
+def insert_area():
+    area = request.form['textfield']
+    qry = "INSERT INTO `area` VALUES(NULL,%s,%s)"
+    iud(qry, (session['lid'], area))
+    return '''<script>alert("Susscessfully Added");window.location="manage_area"</script>'''
+
+
+@app.route("/delete_area")
+def delete_area():
+    id = request.args.get('id')
+    qry = "DELETE FROM `area` WHERE id=%s"
+    iud(qry, id)
+    return '''<script>alert("Successfully deleted");window.location="manage_area"</script>'''
+
+
+@app.route('/add_ashaworker', methods=['post'])
 def add_ashaworker():
-    return render_template("panchayath/add_ashaworker.html")
+    qry = "select * from area where pid=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/add_ashaworker.html", val=res)
+
+
+@app.route("/insert_ashaworker", methods=['post'])
+def insert_ashaworker():
+    name = request.form['textfield']
+    post_office = request.form['textfield2']
+    place = request.form['textfield3']
+    pincode = request.form['textfield4']
+    email = request.form['textfield5']
+    phone = request.form['textfield6']
+    area = request.form['select']
+    username = request.form['textfield7']
+    password = request.form['textfield8']
+
+    qry = "INSERT INTO login VALUES(NULL,%s,%s,'ashaworker')"
+    id = iud(qry, (username, password))
+
+    qry = "INSERT INTO `ashaworker` VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    iud(qry, (id,session['lid'],name, post_office, place, pincode, email, phone, area))
+    return '''<script>alert("Successfully Added Ashaworker");window.location="manage_ashaworker"</script>'''
+
+
+@app.route("/delete_ashaworker")
+def delete_ashaworker():
+    id = request.args.get('id')
+    qry = "DELETE FROM `login` WHERE id=%s"
+    iud(qry, id)
+    qry = "DELETE FROM `ashaworker` WHERE `l_id`=%s"
+    iud(qry, id)
+
+    return '''<script>alert("Successfully deleted");window.location="manage_ashaworker"</script>'''
+
 
 
 @app.route("/edit_ashaworker")
@@ -304,27 +359,108 @@ def edit_ashaworker():
     session['aid'] = id
     qry = "SELECT * FROM `ashaworker` WHERE l_id= %s"
     res = selectone(qry, id)
-    return render_template("panchayath/edit_ashaworker.html", val=res)
+
+    qry = "SELECT `area`.* FROM `area` where pid=%s"
+    res1 = selectall2(qry, session['lid'])
+
+    return render_template("panchayath/edit_ashaworker.html", val=res, val2=res1)
 
 
-@app.route("/update_ashaworker")
+@app.route("/update_ashaworker", methods=['post'])
 def update_ashaworker():
+    name = request.form['textfield']
+    post_office = request.form['textfield2']
+    place = request.form['textfield3']
+    pincode = request.form['textfield4']
+    email = request.form['textfield5']
+    phone = request.form['textfield6']
+    area = request.form['select']
+
+    qry = "UPDATE `ashaworker` SET `name`=%s, `place`=%s, `post`=%s, `pin`=%s, `email`=%s, `ph_no`=%s, `area`=%s WHERE `l_id`=%s"
+    iud(qry,(name, place, post_office, pincode, email, phone, area, session['aid']))
+
     return '''<script>alert("Susscessfully edited");window.location="manage_ashaworker"</script>'''
 
 
-@app.route("/add_program")
+@app.route("/add_program", methods=['post'])
 def add_program():
     return render_template("panchayath/add_program.html")
 
 
-@app.route("/add_vaccine_details")
+@app.route("/insert_program", methods=['post'])
+def insert_program():
+    program = request.files['textfield']
+
+    prgrm_name = secure_filename(program.filename)
+    program.save(os.path.join("static/uploads", prgrm_name))
+
+    qry = "INSERT `programs` VALUES(NULL,%s,%s,CURDATE())"
+    iud(qry, (session['lid'], prgrm_name))
+
+    return '''<script>alert("Success");window.location="manage_panchayath_program"</script>'''
+
+
+@app.route("/delete_program")
+def delete_program():
+    id = request.args.get('id')
+
+    qry = "DELETE FROM `programs` WHERE `id`=%s"
+    iud(qry, id)
+
+    return '''<script>alert("Successfully deleted");window.location="manage_panchayath_program"</script>'''
+
+
+@app.route("/add_vaccine_details", methods=['post'])
 def add_vaccine_details():
     return render_template("panchayath/add_vaccine_details.html")
 
 
+@app.route("/insert_vaccine_details", methods=['post'])
+def insert_vaccine_details():
+    vaccine_name = request.form['textfield']
+    details = request.form['textfield2']
+    type = request.form['textfield3']
+
+    qry = "INSERT INTO `vaccine` VALUES(NULL,%s,%s,%s,%s)"
+    iud(qry,(session['lid'],vaccine_name,details,type))
+    return '''<script>alert("successfully added");window.location="manage_vaccination_details"</script>'''
+
+
+@app.route("/delete_vaccination_details")
+def delete_vaccination_details():
+    id = request.args.get('id')
+
+    qry = "DELETE FROM `vaccine` WHERE `id`=%s"
+    iud(qry, id)
+
+    return '''<script>alert("Successfully deleted");window.location="manage_vaccination_details"</script>'''
+
+
+@app.route("/edit_vaccination_details")
+def edit_vaccination_details():
+    id = request.args.get('id')
+    session['vid'] = id
+    qry = "SELECT * FROM `vaccine` WHERE id=%s"
+    res = selectone(qry, id)
+    print(res)
+    return render_template("panchayath/edit_vaccine_details.html", val=res)
+
+
+@app.route("/update_vaccination_details", methods=['post'])
+def update_vaccination_details():
+    vaccine_name = request.form['textfield']
+    details = request.form['textfield2']
+    type = request.form['textfield3']
+
+    qry = "UPDATE `vaccine` SET `vaccine_name`=%s , `details`=%s, `type`=%s WHERE `id`=%s"
+    iud(qry,(vaccine_name,details,type,session['vid']))
+
+    return '''<script>alert("Successfully Edited");window.location="manage_vaccination_details"</script>'''
+
+
 @app.route("/manage_ashaworker")
 def manage_ashaworker():
-    qry = "SELECT * FROM `ashaworker` WHERE `panchayath_id`=%s"
+    qry = "SELECT `ashaworker`.*,`area`.area AS area_name FROM `ashaworker` JOIN `area` ON `ashaworker`.`area`=`area`.id WHERE `panchayath_id`=%s"
     res = selectall2(qry, session['lid'])
     return render_template("panchayath/manage_ashaworker.html",val=res)
 
@@ -352,7 +488,7 @@ def manage_vaccination_details():
 
 @app.route("/view_mothers_details")
 def view_mothers_details():
-    return render_template("Admin/view_mothers_details.html")
+    return render_template("panchayath/view_mothers_details.html")
 
 #ashaworker============================================================================
 @app.route("/ashaworker_home")

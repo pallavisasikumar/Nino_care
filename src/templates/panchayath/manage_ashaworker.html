@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "panchayath/panchayath_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
@@ -7,7 +7,7 @@
 
 <body>
 <form id="form1" name="form1" method="post" action="add_ashaworker#about">
-  <table width="200" border="1">
+  <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Post Office </th>
@@ -26,9 +26,9 @@
       <td>{{i['pin']}}</td>
       <td>{{i['email']}}</td>
       <td>{{i['ph_no']}}</td>
-      <td>{{i['area']}}</td>
-      <td><p><a href="edit_ashaworker?id={{i['id']}}">Edit</a></p>
-      <p><a href="#">Delete</a></p></td>
+      <td>{{i['area_name']}}</td>
+      <td><p><a href="edit_ashaworker?id={{i['l_id']}}">Edit</a></p>
+      <p><a href="delete_ashaworker?id={{i['l_id']}}">Delete</a></p></td>
     </tr>
     {% endfor %}
     <tr>
@@ -40,4 +40,5 @@
   <label></label>
 </form>
 </body>
-</html>
+<!--</html>-->
+{% endblock %}

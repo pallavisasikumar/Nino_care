@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "panchayath/panchayath_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1">
+<form id="form1" name="form1" method="post" action="add_vaccine_details">
+  <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="col">Vaccine Name </th>
       <th scope="col">Details</th>
@@ -19,8 +19,8 @@
       <td>{{i['vaccine_name']}}</td>
       <td>{{i['details']}}</td>
       <td>{{i['type']}}</td>
-      <td><p><a href="#">Edit</a></p>
-      <p><a href="#">Delete</a></p></td>
+      <td><p><a href="edit_vaccination_details?id={{i['id']}}">Edit</a></p>
+      <p><a href="delete_vaccination_details?id={{i['id']}}">Delete</a></p></td>
     </tr>
     {% endfor %}
     <tr>
@@ -31,4 +31,5 @@
   </table>
 </form>
 </body>
-</html>
+<!--</html>-->
+{% endblock %}
