@@ -2,15 +2,22 @@ from flask import *
 from src.dbconnection import *
 from werkzeug.utils import secure_filename
 import os
+from flask_mail import *
+from email import encoders
 
 app = Flask(__name__)
 
 app.secret_key = "651283481564283"
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'ninocareproject@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ioon ywiq cqkk bfaf'
+
 @app.route('/')
 def login():
     return render_template("login_index.html")
-
 
 @app.route("/login_code",methods=['post'])
 def login_code():
@@ -397,6 +404,58 @@ def insert_program():
     qry = "INSERT `programs` VALUES(NULL,%s,%s,CURDATE())"
     iud(qry, (session['lid'], prgrm_name))
 
+    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    res = selectall2(qry,session['lid'])
+    print(res)
+
+    def mail(email):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')
+        except Exception as e:
+            print("Couldn't setup email!! " + str(e))
+            return '''<script>alert("Could not setup email!"); window.location="/"</script>'''
+
+        # Create a multipart message
+        msg = MIMEMultipart()
+        msg['From'] = 'ninocareproject@gmail.com'
+        msg['To'] = email
+        msg['Subject'] = 'New Panchayath Program'
+
+        # Attach the text message
+        body = "New program added. check it out."
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Attach the PDF file
+        pdf_filename = "static/uploads/"+prgrm_name  # Replace with your PDF file path
+        try:
+            with open(pdf_filename, "rb") as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename= {pdf_filename}')
+                msg.attach(part)
+        except Exception as e:
+            print("Couldn't attach the PDF file!! " + str(e))
+            return '''<script>alert("Could not attach the PDF!"); window.location="/"</script>'''
+
+        # Send the email
+        try:
+            gmail.send_message(msg)
+            gmail.quit()
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+            return '''<script>alert("Couldn't send email!"); window.location="/"</script>'''
+
+        return '''<script>alert("Email sent successfully!"); window.location="/"</script>'''
+
+    for i in res:
+        print(i)
+        email = i['email']
+        mail(email)
+
     return '''<script>alert("Success");window.location="manage_panchayath_program"</script>'''
 
 
@@ -421,8 +480,38 @@ def insert_vaccine_details():
     details = request.form['textfield2']
     type = request.form['textfield3']
 
+    email_content = request.form['email']
+
     qry = "INSERT INTO `vaccine` VALUES(NULL,%s,%s,%s,%s)"
     iud(qry,(session['lid'],vaccine_name,details,type))
+
+    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    res = selectall2(qry, session['lid'])
+
+    def mail(email):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')
+        except Exception as e:
+            print("Couldn't setup email!!" + str(e))
+        msg = MIMEText(email_content)
+        print(msg)
+        msg['Subject'] = 'Vaccination'
+        msg['To'] = email
+        msg['From'] = 'ninocareproject@gmail.com'
+        try:
+            gmail.send_message(msg)
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+        return '''<script>alert("SEND"); window.location="/"</script>'''
+
+    for i in res:
+        print(i)
+        email = i['email']
+        mail(email)
+
     return '''<script>alert("successfully added");window.location="manage_vaccination_details"</script>'''
 
 
@@ -488,7 +577,9 @@ def manage_vaccination_details():
 
 @app.route("/view_mothers_details")
 def view_mothers_details():
-    return render_template("panchayath/view_mothers_details.html")
+    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/view_mothers_details.html", val=res)
 
 #ashaworker============================================================================
 @app.route("/ashaworker_home")

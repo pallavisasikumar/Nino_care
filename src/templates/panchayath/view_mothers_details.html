@@ -12,20 +12,35 @@
       <th scope="row">Name</th>
       <td>Addrerss</td>
       <td>Area</td>
-      <td>&nbsp;</td>
       <td>Contact</td>
       <td>Number of children </td>
 	  <td>Location</td>
     </tr>
+
+    {% for i in val %}
+
     <tr>
-      <th scope="row">&nbsp;</th>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-	  <td><a href="#">View in map</a></td>
+      <th>{{i['name']}}</th>
+      <td>
+
+        <b>Place: </b> {{i['place']}} <br>
+
+        <b>Post: </b> {{i['post']}} <br>
+        <b>Pin: </b> {{i['pin']}}
+
+      </td>
+      <td>{{i['area']}}</td>
+      <td>
+        <b>Phone: </b> {{i['ph_no']}} <br>
+        <b>Email: </b>{{i['email']}}
+
+      </td>
+      <td>{{i['no_of_child']}}</td>
+	  <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
     </tr>
+
+    {% endfor %}
+
   </table>
 </form>
 </body>
