@@ -38,15 +38,26 @@ def login_code():
         return '''<script>alert("Welcome Panchayath");window.location="panchayath_home"</script>'''
     elif res['type']=="ashaworker":
         session['lid'] = res['id']
-        return '''<script>alert("Welcome Ashaworker");window.location="panchayath_home"</script>'''
+        return '''<script>alert("Welcome Ashaworker");window.location="ashaworker_home"</script>'''
     elif res['type']=="user":
         session['lid'] = res['id']
         return '''<script>alert("Welcome User");window.location="user_home"</script>'''
 
 
-@app.route("/user_registration")
+@app.route("/user_reg1")
+def user_reg1():
+    qry = "SELECT * FROM `panchayath`"
+    res = selectall(qry)
+    return render_template("user_register_one.html", val=res)
+
+@app.route("/user_registration", methods=['post'])
 def user_registration():
-    return render_template("user_registration.html")
+    pid = request.form['select']
+    session['pid'] = pid
+    qry = "SELECT * FROM `area` WHERE pid=%s"
+    res = selectall2(qry, pid)
+    print(res)
+    return render_template("user_registration.html", val=res)
 
 
 @app.route("/registration_code", methods=['post'])
@@ -55,7 +66,6 @@ def registration_code():
     place=request.form['textfield2']
     post=request.form['textfield3']
     pin=request.form['textfield4']
-    panchayath=request.form['panchayath']
     area=request.form['select']
     ph_no=request.form['textfield5']
     email=request.form['textfield6']
@@ -70,7 +80,7 @@ def registration_code():
     id = iud(qry,(username,password))
 
     qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    iud(qry,(id,panchayath, name, place, post, pin, area, ph_no, email, number_of_child, pregnant, latitude, longitude))
+    iud(qry,(id, session['pid'], name, place, post, pin, area, ph_no, email, number_of_child, pregnant, latitude, longitude))
 
     return '''<script>alert("Successfully registered");window.location="/"</script>'''
 
@@ -404,7 +414,7 @@ def insert_program():
     qry = "INSERT `programs` VALUES(NULL,%s,%s,CURDATE())"
     iud(qry, (session['lid'], prgrm_name))
 
-    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry,session['lid'])
     print(res)
 
@@ -429,7 +439,7 @@ def insert_program():
         msg.attach(MIMEText(body, 'plain'))
 
         # Attach the PDF file
-        pdf_filename = "static/uploads/"+prgrm_name  # Replace with your PDF file path
+        pdf_filename = "static/uploads/"+prgrm_name
         try:
             with open(pdf_filename, "rb") as attachment:
                 part = MIMEBase('application', 'octet-stream')
@@ -452,7 +462,6 @@ def insert_program():
         return '''<script>alert("Email sent successfully!"); window.location="/"</script>'''
 
     for i in res:
-        print(i)
         email = i['email']
         mail(email)
 
@@ -485,7 +494,7 @@ def insert_vaccine_details():
     qry = "INSERT INTO `vaccine` VALUES(NULL,%s,%s,%s,%s)"
     iud(qry,(session['lid'],vaccine_name,details,type))
 
-    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry, session['lid'])
 
     def mail(email):
@@ -577,14 +586,14 @@ def manage_vaccination_details():
 
 @app.route("/view_mothers_details")
 def view_mothers_details():
-    qry = "SELECT * FROM `user` WHERE `user`.panchayath_id=%s"
+    qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry, session['lid'])
     return render_template("panchayath/view_mothers_details.html", val=res)
 
 #ashaworker============================================================================
 @app.route("/ashaworker_home")
 def ashaworker_home():
-    return render_template("Ashaworker/ashaworker_home.html")
+    return render_template("Ashaworker/ashaworker_index.html")
 
 
 @app.route("/add_child")
@@ -604,7 +613,25 @@ def manage_users():
 
 @app.route("/verify_users")
 def verify_users():
-    return render_template("Ashaworker/verify_users.html")
+    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending'"
+    res = selectall(qry)
+    return render_template("Ashaworker/verify_users.html", val=res)
+
+
+@app.route("/accept_user")
+def accept_user():
+    id = request.args.get('id')
+    qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
+    iud(qry, id)
+    return '''<script>alert("Accepted");window.location="verify_users"</script>'''
+
+
+@app.route("/reject_user")
+def reject_user():
+    id = request.args.get('id')
+    qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
+    iud(qry, id)
+    return '''<script>alert("Rejected");window.location="verify_users"</script>'''
 
 
 @app.route("/view_programs_schemes")

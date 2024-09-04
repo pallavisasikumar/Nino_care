@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "reg_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
@@ -7,7 +7,7 @@
 
 <body>
 <form id="form1" name="form1" method="post" action="registration_code">
-  <table width="200" border="1">
+  <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="row">Name</th>
       <td><label>
@@ -27,24 +27,16 @@
       <td><input type="text" name="textfield4" /></td>
     </tr>
 
-    <tr>
-      <th scope="row">Panchayath</th>
-      <td><label>
-        <select name="panchayath">
-          <option>p1</option>
-          <option>p2</option>
-          <option>p3</option>
-        </select>
-      </label></td>
-    </tr>
 
     <tr>
       <th scope="row">Area</th>
       <td><label>
         <select name="select">
-          <option>A</option>
-          <option>b</option>
-          <option>c</option>
+          {% for i in val %}
+
+          <option value="{{i['id']}}">{{i['area']}}</option>
+
+          {% endfor %}
         </select>
       </label></td>
     </tr>
@@ -86,12 +78,13 @@
       <th scope="row">Password</th>
       <td><input type="text" name="textfield10" /></td>
     </tr>
-    <tr>
+    <tr align="center">
       <th colspan="2" scope="row"><label>
-        <input type="submit" name="Submit" value="SUBMIT" />
+        <input type="submit" name="Submit" value="SUBMIT" class="btn btn-primary" />
       </label></th>
     </tr>
   </table>
 </form>
 </body>
-</html>
+<!--</html>-->
+{% endblock %}
