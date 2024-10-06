@@ -1,0 +1,29 @@
+{% extends "User/user_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="">
+  <table width="200" border="1" class="table table-hover table-striped table-bordered">
+
+    <tr>
+      <td>Program Name</td>
+      <td>Details</td>
+      <td>Files</td>
+      <td>Date</td>
+    </tr>
+     {% for i in val %}
+    <tr>
+      <td>{{i['program name']}}</td>
+      <td>{{i['details']}}</td>
+      <td><a href="../static/uploads/{{i['attachment']}}">View</a></td>
+      <td>{{i['date']}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</form>
+</body>
+{% endblock %}

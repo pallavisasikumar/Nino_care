@@ -358,6 +358,41 @@ def insert_ashaworker():
     return '''<script>alert("Successfully Added Ashaworker");window.location="manage_ashaworker"</script>'''
 
 
+@app.route("/manage_reports")
+def manage_reports():
+    qry = "SELECT * FROM `reports` WHERE panchayath_id = %s"
+    res = selectall2(qry, session['lid'])
+    return render_template("panchayath/manage_reports.html", val=res)
+
+
+@app.route("/add_report", methods=['post'])
+def add_report():
+    return render_template("panchayath/add_report.html")
+
+
+@app.route("/insert_report", methods=['post'])
+def insert_report():
+    report = request.files['file1']
+
+    report_name = secure_filename(report.filename)
+    report.save(os.path.join("static/uploads", report_name))
+
+    qry = "INSERT `reports` VALUES(NULL,%s,%s,CURDATE())"
+    iud(qry, (session['lid'], report_name))
+
+    return '''<script>alert("Successfully added");window.location="manage_reports"</script>'''
+
+
+@app.route("/delete_report")
+def delete_report():
+    id = request.args.get('id')
+
+    qry = "DELETE FROM `reports` WHERE `id`=%s"
+    iud(qry, id)
+
+    return '''<script>alert("Successfully deleted");window.location="manage_reports"</script>'''
+
+
 @app.route("/delete_ashaworker")
 def delete_ashaworker():
     id = request.args.get('id')
@@ -367,7 +402,6 @@ def delete_ashaworker():
     iud(qry, id)
 
     return '''<script>alert("Successfully deleted");window.location="manage_ashaworker"</script>'''
-
 
 
 @app.route("/edit_ashaworker")
@@ -411,8 +445,11 @@ def insert_program():
     prgrm_name = secure_filename(program.filename)
     program.save(os.path.join("static/uploads", prgrm_name))
 
-    qry = "INSERT `programs` VALUES(NULL,%s,%s,CURDATE())"
-    iud(qry, (session['lid'], prgrm_name))
+    name = request.form['name']
+    details = request.form['details']
+
+    qry = "INSERT `programs` VALUES(NULL,%s,%s,%s,%s,CURDATE())"
+    iud(qry, (session['lid'], name, prgrm_name, details))
 
     qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry,session['lid'])
@@ -488,11 +525,12 @@ def insert_vaccine_details():
     vaccine_name = request.form['textfield']
     details = request.form['textfield2']
     type = request.form['textfield3']
+    date = request.form['date']
 
     email_content = request.form['email']
 
-    qry = "INSERT INTO `vaccine` VALUES(NULL,%s,%s,%s,%s)"
-    iud(qry,(session['lid'],vaccine_name,details,type))
+    qry = "INSERT INTO `vaccine` VALUES(NULL,%s,%s,%s,%s,%s)"
+    iud(qry,(session['lid'],vaccine_name,details,date,type))
 
     qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry, session['lid'])
@@ -549,6 +587,7 @@ def update_vaccination_details():
     vaccine_name = request.form['textfield']
     details = request.form['textfield2']
     type = request.form['textfield3']
+    date = request.form['date']
 
     qry = "UPDATE `vaccine` SET `vaccine_name`=%s , `details`=%s, `type`=%s WHERE `id`=%s"
     iud(qry,(vaccine_name,details,type,session['vid']))
@@ -642,22 +681,41 @@ def view_programs_schemes():
 #User===========================================================================
 @app.route("/user_home")
 def user_home():
-    return render_template("User/user_home.html")
+    return render_template("User/user_index.html")
 
 
 @app.route("/view_food_details")
 def view_food_details():
-    return render_template("User/view_food_details.html")
+    qry = "SELECT * FROM `food`"
+    res = selectall(qry)
+    return render_template("User/view_food_details.html", val=res)
 
 
-@app.route("/view_programs_and_schemes")
-def view_programs_and_schemes():
-    return render_template("User/view_programs_and_schemes.html")
+@app.route("/view_programs")
+def view_programs():
+    qry = "SELECT * FROM `programs` JOIN `user` ON `programs`.`panchayath_id`=`user`.`panchayath_id` WHERE `user`.`l_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("User/view_programs.html", val=res)
+
+
+@app.route("/view_schemes")
+def view_schemes():
+    qry = "SELECT * FROM `gov_schemes`"
+    res = selectall(qry)
+    return render_template("User/view_schemes.html", val=res)
 
 
 @app.route("/view_vaccine_details")
 def view_vaccine_details():
     return render_template("User/view_vaccine_details.html")
+
+
+@app.route("/view_vaccine_details2", methods=['post'])
+def view_vaccine_details2():
+    type = request.form['select']
+    qry = "SELECT * FROM `vaccine` JOIN `user` ON `vaccine`.`panchayath_id`=`user`.`panchayath_id` WHERE  `vaccine`.`type`=%s and user.l_id=%s"
+    res = selectall2(qry, (type,session['lid']))
+    return render_template("User/view_vaccine_details.html", val=res)
 
 
 app.run(debug=True)

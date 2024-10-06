@@ -1,0 +1,26 @@
+{% extends "panchayath/panchayath_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="insert_report" enctype="multipart/form-data">
+  <table width="200" border="1" class="table table-hover table-striped">
+    <tr>
+      <th scope="row">Report</th>
+      <td><label>
+        <input type="file" name="file1" />
+      </label></td>
+    </tr>
+    <tr align="center">
+      <th colspan="2" scope="row"><label>
+        <input type="submit" name="Submit" value="Add" class="btn btn-primary"/>
+      </label></th>
+    </tr>
+  </table>
+</form>
+</body>
+<!--</html>-->
+{% endblock %}

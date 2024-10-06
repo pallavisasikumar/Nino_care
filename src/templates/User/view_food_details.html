@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "User/user_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
@@ -7,25 +7,26 @@
 
 <body>
 <form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1">
+  <table width="200" border="1" class="table table-hover table-striped">
     <tr>
-      <th colspan="3" scope="col"><label>
-        <select name="select">
-        </select>
-        <input type="submit" name="Submit" value="Search" />
-      </label></th>
+      <th scope="col">Food</th>
+      <th scope="col">Details</th>
+      <th scope="col">Image</th>
+      <th scope="col">Type</th>
     </tr>
+    {% for i in val%}
     <tr>
-      <td>Food</td>
-      <td>Image</td>
-      <td>Details</td>
+      <td>{{i['food']}}</td>
+      <td>{{i['details']}}</td>
+      <td><img src="../static/uploads/{{i['image']}}" width="200" height="200"> </td>
+      <td>{{i['type']}}</td>
+
     </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
+
+    {% endfor %}
+
   </table>
 </form>
 </body>
-</html>
+<!--</html>-->
+{% endblock %}

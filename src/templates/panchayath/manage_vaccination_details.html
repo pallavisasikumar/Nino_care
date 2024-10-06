@@ -12,6 +12,7 @@
       <th scope="col">Vaccine Name </th>
       <th scope="col">Details</th>
       <th scope="col">Type</th>
+      <th scope="col">Date</th>
       <th scope="col">&nbsp;</th>
     </tr>
     {% for i in val %}
@@ -19,12 +20,13 @@
       <td>{{i['vaccine_name']}}</td>
       <td>{{i['details']}}</td>
       <td>{{i['type']}}</td>
+      <td>{{i['date']}}</td>
       <td><p><a href="edit_vaccination_details?id={{i['id']}}">Edit</a></p>
       <p><a href="delete_vaccination_details?id={{i['id']}}">Delete</a></p></td>
     </tr>
     {% endfor %}
     <tr align="center">
-      <td colspan="4"><label>
+      <td colspan="5"><label>
         <input type="submit" name="Submit" value="Add" class="btn btn-primary"/>
       </label></td>
     </tr>
