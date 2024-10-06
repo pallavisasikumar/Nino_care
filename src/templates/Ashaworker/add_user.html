@@ -1,0 +1,90 @@
+{% extends "Ashaworker/ashaworker_index.html" %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="registration_code">
+  <table width="200" border="1" class="table table-hover table-striped">
+    <tr>
+      <th scope="row">Name</th>
+      <td><label>
+        <input type="text" name="textfield" />
+      </label></td>
+    </tr>
+    <tr>
+      <th scope="row">Place</th>
+      <td><input type="text" name="textfield2" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Post</th>
+      <td><input type="text" name="textfield3" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Pin</th>
+      <td><input type="text" name="textfield4" /></td>
+    </tr>
+
+
+    <tr>
+      <th scope="row">Area</th>
+      <td><label>
+        <select name="select">
+          {% for i in val %}
+
+          <option value="{{i['id']}}">{{i['area']}}</option>
+
+          {% endfor %}
+        </select>
+      </label></td>
+    </tr>
+    <tr>
+      <th scope="row">Phone Number </th>
+      <td><input type="text" name="textfield5" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Email</th>
+      <td><input type="text" name="textfield6" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Pregnant</th>
+      <td><label>
+        <select name="select2">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </label></td>
+    </tr>
+     <tr>
+      <th scope="row">Number of child</th>
+      <td><input type="text" name="child" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Latitude</th>
+      <td><input type="text" name="textfield7" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Longitude</th>
+      <td><input type="text" name="textfield8" /></td>
+    </tr>
+
+    <tr>
+      <th scope="row">Username</th>
+      <td><input type="text" name="textfield9" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Password</th>
+      <td><input type="text" name="textfield10" /></td>
+    </tr>
+    <tr align="center">
+      <th colspan="2" scope="row"><label>
+        <input type="submit" name="Submit" value="SUBMIT" class="btn btn-primary" />
+      </label></th>
+    </tr>
+  </table>
+</form>
+</body>
+<!--</html>-->
+{% endblock %}

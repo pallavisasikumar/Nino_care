@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "Ashaworker/ashaworker_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
@@ -7,34 +7,44 @@
 
 <body>
 <form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1">
+  <table class="table table-hover table-striped table-bordered" border="1">
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Address</th>
-      <th scope="col">Area</th>
       <th scope="col">Contact</th>
       <th scope="col">Number of childrens  </th>
       <th scope="col">Pregnant/Not  </th>
       <th scope="col">Location</th>
       <th scope="col">&nbsp;</th>
     </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td><a href="#">View in map</a></td>
-      <td><p><a href="#">Edit</a></p>
-      <p><a href="#">Delete</a></p></td>
+
+    {% for i in val %}
+
+  <tr>
+      <td>{{i['name']}}</td>
+      <td>
+        <b>Place: </b> {{i['place']}} <br>
+        <b>Post: </b> {{i['post']}} <br>
+        <b>Pin: </b> {{i['pin']}}
+      </td>
+      <td>  <b>Phone: </b> {{i['ph_no']}} <br>
+        <b>Email: </b>{{i['email']}}
+      </td>
+      <td>{{i['no_of_child']}}</td>
+      <td>{{i['type']}}</td>
+      <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
+      <td><p><a href="delete_user?id={{i['l_id']}}">Delete</a></p></td>
     </tr>
-    <tr>
+
+    {% endfor %}
+
+    <tr align="center">
       <td colspan="8"><label>
-        <input type="submit" name="Submit" value="ADD" />
+        <input type="submit" name="Submit" value="ADD" class="btn btn-primary" />
       </label></td>
     </tr>
   </table>
 </form>
 </body>
-</html>
+<!--</html>-->
+{% endblock %}

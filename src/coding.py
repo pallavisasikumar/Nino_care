@@ -647,7 +647,9 @@ def manage_child_details():
 
 @app.route("/manage_users")
 def manage_users():
-    return render_template("Ashaworker/manage_users.html")
+    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area"
+    res = selectall(qry)
+    return render_template("Ashaworker/manage_users.html", val=res)
 
 
 @app.route("/verify_users")
@@ -655,6 +657,14 @@ def verify_users():
     qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending'"
     res = selectall(qry)
     return render_template("Ashaworker/verify_users.html", val=res)
+
+
+@app.route("/delete_user")
+def delete_user():
+    id = request.args.get('id')
+    qry = "delete from login where id=%s"
+    iud(qry, id)
+    return '''<script>alert("Deleted");window.location="manage_users"</script>'''
 
 
 @app.route("/accept_user")
@@ -703,6 +713,20 @@ def view_schemes():
     qry = "SELECT * FROM `gov_schemes`"
     res = selectall(qry)
     return render_template("User/view_schemes.html", val=res)
+
+
+@app.route("/ashaworker_view_programs")
+def ashaworker_view_programs():
+    qry = "SELECT * FROM `programs` JOIN `ashaworker` ON `programs`.`panchayath_id`=`ashaworker`.`panchayath_id` WHERE `ashaworker`.`l_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("Ashaworker/view_programs.html", val=res)
+
+
+@app.route("/ashaworker_view_schemes")
+def ashaworker_view_schemes():
+    qry = "SELECT * FROM `gov_schemes`"
+    res = selectall(qry)
+    return render_template("Ashaworker/view_schemes.html", val=res)
 
 
 @app.route("/view_vaccine_details")
