@@ -1,21 +1,118 @@
 {% extends "Admin/admin_index.html" %}
 {% block body %}
 
-
 <body>
-<table width="200" border="1" class="table table-bordered table-hover table-striped">
-  <tr>
-    <th scope="col">Panchayath Name </th>
-    <th scope="col">Report</th>
-    <th scope="col">Date</th>
-  </tr>
-  {% for i in val %}
-  <tr align="center">
-    <td>{{i['name']}}</td>
-    <td><a href="../static/uploads/{{i['report']}}"> {{i['report']}}</a></td>
-    <td>{{i['date']}}</td>
-  </tr>
-  {% endfor %}
-</table>
+
+<form action="filter_report" method="post">
+
+  <table width="200" border="1" class="table table-bordered table-hover table-striped">
+    <!-- District Dropdown -->
+    <tr>
+      <th>District</th>
+      <th colspan="2">
+        <select name="dist" id="district-select">
+          <option value="">Select District</option>
+          {% for i in val2 %}
+          <option value="{{ i['district'] }}">{{ i['district'] }}</option>
+          {% endfor %}
+        </select>
+      </th>
+    </tr>
+
+    <!-- Taluk Dropdown -->
+    <tr>
+      <th>Taluk</th>
+      <th colspan="2">
+        <select id="taluk-select">
+          <option value="">Select Taluk</option>
+        </select>
+      </th>
+    </tr>
+
+    <!-- Panchayath Dropdown -->
+    <tr>
+      <th>Panchayath</th>
+      <th colspan="2">
+        <select id="panchayath-select" name="pid">
+          <option value="">Select Panchayath</option>
+        </select>
+
+        <input type="submit" value="Search">
+
+      </th>
+    </tr>
+
+    <!-- Panchayath Report Table -->
+    <tr>]
+      <th scope="col">Report</th>
+      <th scope="col">Date</th>
+    </tr>
+    {% for i in val %}
+    <tr align="center">
+      <td><a href="../static/uploads/{{ i['report'] }}"> {{ i['report'] }}</a></td>
+      <td>{{ i['date'] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  </form>
+  <!-- Include jQuery for handling AJAX requests -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      // Event listener for district selection
+      $('#district-select').on('change', function() {
+        var districtName = $(this).val();
+
+        if (districtName) {
+          $.ajax({
+            url: '/select_taluks',  // Flask route to get Taluks
+            type: 'GET',
+            data: { dist: districtName },  // Pass the selected district name to the server
+            success: function(data) {
+              $('#taluk-select').html('<option value="">Select Taluk</option>');
+              $.each(data, function(index, taluk) {
+                $('#taluk-select').append('<option value="' + taluk.taluk_name + '">' + taluk.taluk_name + '</option>');
+              });
+            },
+            error: function() {
+              alert('Error loading Taluks.');
+            }
+          });
+        } else {
+          $('#taluk-select').html('<option value="">Select Taluk</option>');
+        }
+
+        // Clear Panchayath dropdown when district changes
+        $('#panchayath-select').html('<option value="">Select Panchayath</option>');
+      });
+
+      // Event listener for taluk selection
+      $('#taluk-select').on('change', function() {
+        var talukName = $(this).val();
+
+        if (talukName) {
+          $.ajax({
+            url: '/select_panchayath',  // Flask route to get Panchayaths
+            type: 'GET',
+            data: { taluk: talukName },  // Pass the selected taluk name to the server
+            success: function(data) {
+              $('#panchayath-select').html('<option value="">Select Panchayath</option>');
+              $.each(data, function(index, panchayath) {
+                // Set the value as l_id and display name as the option text
+                $('#panchayath-select').append('<option value="' + panchayath.l_id + '">' + panchayath.name + '</option>');
+              });
+            },
+            error: function() {
+              alert('Error loading Panchayaths.');
+            }
+          });
+        } else {
+          $('#panchayath-select').html('<option value="">Select Panchayath</option>');
+        }
+      });
+    });
+  </script>
+
 </body>
 {% endblock %}

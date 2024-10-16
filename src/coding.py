@@ -4,6 +4,13 @@ from werkzeug.utils import secure_filename
 import os
 from flask_mail import *
 from email import encoders
+import random
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
+
+
+from threading import Timer
+
 
 app = Flask(__name__)
 
@@ -215,11 +222,46 @@ def manage_scheme():
     return render_template("Admin/manage_scheme.html",val=res)
 
 
+@app.route("/select_taluks")
+def select_taluks():
+    dist = request.args.get("dist")
+    qry = "SELECT DISTINCT(`taluk_name`) FROM `panchayath` WHERE `district`=%s"
+    res = selectall2(qry, dist)
+    return jsonify(res)
+
+
+@app.route("/select_panchayath")
+def select_panchayath():
+    taluk_name = request.args.get("taluk")
+    qry = "SELECT * FROM `panchayath` WHERE `taluk_name`=%s"
+    res = selectall2(qry, taluk_name)
+    return jsonify(res)
+
+
+
 @app.route("/view_report")
 def view_report():
-    qry="SELECT panchayath.name,reports.* FROM panchayath JOIN reports ON panchayath.l_id=reports.panchayath_id"
-    res=selectall(qry)
-    return render_template("Admin/view_report.html",val=res)
+
+    qry = "SELECT DISTINCT(`district`) FROM `panchayath` "
+    res = selectall(qry)
+
+    # qry="SELECT panchayath.name,reports.* FROM panchayath JOIN reports ON panchayath.l_id=reports.panchayath_id"
+    # res2=selectall(qry)
+    return render_template("Admin/view_report.html", val2=res)
+
+
+@app.route("/filter_report", methods = ['post'])
+def filter_report():
+    panchayath = request.form['pid']
+    print(request.form)
+
+    qry = "SELECT * FROM `reports` WHERE `panchayath_id`=%s"
+    res = selectall2(qry, panchayath)
+
+    qry = "SELECT DISTINCT(`district`) FROM `panchayath` "
+    res2 = selectall(qry)
+
+    return render_template("Admin/view_report.html", val=res, val2=res2)
 
 
 @app.route("/add_food_details",methods=["post"])
@@ -652,6 +694,38 @@ def manage_users():
     return render_template("Ashaworker/manage_users.html", val=res)
 
 
+@app.route("/add_user", methods=['post'])
+def add_user():
+    return render_template("/Ashaworker/add_user.html")
+
+
+@app.route("/insert_code", methods=['post'])
+def insert_code():
+    name = request.form['textfield']
+    place=request.form['textfield2']
+    post=request.form['textfield3']
+    pin=request.form['textfield4']
+    ph_no=request.form['textfield5']
+    email=request.form['textfield6']
+    pregnant=request.form['select2']
+    number_of_child=request.form['child']
+    latitude=request.form['textfield7']
+    longitude=request.form['textfield8']
+    username=request.form['textfield9']
+    password=request.form['textfield10']
+
+    qry = "INSERT INTO login VALUES(NULL,%s,%s,'user')"
+    id = iud(qry,(username,password))
+
+    qry = "SELECT * FROM  `ashaworker` WHERE l_id=%s"
+    res = selectone(qry, session['lid'])
+
+    qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    iud(qry,(id, res['panchayath_id'], name, place, post, pin, res['area'], ph_no, email, number_of_child, pregnant, latitude, longitude))
+
+    return '''<script>alert("Successfully Added");window.location="/manage_users"</script>'''
+
+
 @app.route("/verify_users")
 def verify_users():
     qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending'"
@@ -663,6 +737,8 @@ def verify_users():
 def delete_user():
     id = request.args.get('id')
     qry = "delete from login where id=%s"
+    iud(qry, id)
+    qry = "DELETE FROM `user` WHERE l_id=%s"
     iud(qry, id)
     return '''<script>alert("Deleted");window.location="manage_users"</script>'''
 
@@ -742,4 +818,156 @@ def view_vaccine_details2():
     return render_template("User/view_vaccine_details.html", val=res)
 
 
-app.run(debug=True)
+@app.route("/forgot_password")
+def forgot_password():
+    return  render_template("forgot_password.html")
+
+@app.route("/forgot_password_otp", methods=['post'])
+def forgot_password_otp():
+    type= request.form['type']
+    gmail = request.form['textfield']
+    otp = random.randint(1000, 9999)
+    session['otp'] = str(otp)
+
+    def mail(email):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')
+        except Exception as e:
+            print("Couldn't setup email!!" + str(e))
+        msg = MIMEText(str(otp))
+        print(msg)
+        msg['Subject'] = 'Vaccination'
+        msg['To'] = email
+        msg['From'] = 'ninocareproject@gmail.com'
+        try:
+            gmail.send_message(msg)
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+        return '''<script>alert("SEND"); window.location="/"</script>'''
+
+    if type == "Ashaworker":
+        qry = "SELECT * FROM `ashaworker` WHERE `email`=%s"
+        res = selectone(qry, gmail)
+
+
+        if res is None:
+            return '''<script>alert("Invalid Email Address"); window.location="/"</script>'''
+        else:
+            session['id'] = res['l_id']
+            mail(gmail)
+            return render_template("enter_otp.html")
+
+    elif type == "User":
+        qry = "SELECT * FROM `user` WHERE `email`=%s"
+        res = selectone(qry, gmail)
+
+
+        if res is None:
+            return '''<script>alert("Invalid Email Address"); window.location="/"</script>'''
+        else:
+            session['id'] = res['l_id']
+            mail(gmail)
+            return render_template("enter_otp.html")
+    else:
+        qry = "SELECT * FROM `panchayath` WHERE `email`=%s"
+        res = selectone(qry, gmail)
+
+
+        if res is None:
+            return '''<script>alert("Invalid Email Address"); window.location="/"</script>'''
+        else:
+            session['id'] = res['l_id']
+            mail(gmail)
+            return render_template("enter_otp.html")
+
+
+@app.route("/verify_otp", methods=['post'])
+def verify_otp():
+    otp = request.form['textfield']
+
+    if otp == session['otp']:
+        return render_template("new_password.html")
+    else:
+        return '''<script>alert("OTP missmatch"); window.location="/"</script>'''
+
+
+@app.route("/update_password", methods=['post'])
+def update_password():
+    new_password = request.form['textfield']
+    qry = "UPDATE `login` SET PASSWORD = %s where id=%s"
+    iud(qry,(new_password, session['id']))
+    return '''<script>alert("Password changed successfully"); window.location="/"</script>'''
+
+
+def send_vaccine_notification():
+    try:
+        print("=================================")
+        qry = "SELECT * FROM `vaccine` WHERE DATEDIFF(`date`, CURDATE()) IN (1)"
+        res = selectall(qry)
+
+        print("===============", res)
+
+        for i in res:
+            qry = "SELECT * FROM `user` WHERE `panchayath_id` = %s AND `l_id` NOT IN (SELECT `l_id` FROM `vaccine_notified_users` where vaccine_id=%s)"
+            res2 = selectall2(qry, (i['panchayath_id'],i['id']))
+
+            print("=============res2", res2)
+
+
+
+            for j in res2:
+                qry = "INSERT INTO `vaccine_notified_users` VALUES(NULL, %s, %s, CURDATE())"
+                iud(qry, (j['l_id'], i['id']))
+
+                subject = i['vaccine_name']
+                message = i['details']
+                email = j['email']
+                send_email(email, message, subject)
+
+    except Exception as e:
+        print(str(e))
+
+def send_email(email, message, subject):
+    try:
+        gmail = smtplib.SMTP('smtp.gmail.com', 587)
+        gmail.ehlo()
+        gmail.starttls()
+        gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')  # Secure this in production!!
+    except Exception as e:
+        print(f"Couldn't setup email!! {e}")
+        return
+
+    msg = MIMEText(str(message))
+    msg['Subject'] = subject
+    msg['To'] = email
+    msg['From'] = 'ninocareproject@gmail.com'
+
+    try:
+        gmail.send_message(msg)
+        print(f"Email sent to {email}")
+    except Exception as e:
+        print(f"COULDN'T SEND EMAIL to {email}: {e}")
+    finally:
+        gmail.quit()
+
+# Initialize the scheduler
+scheduler = BackgroundScheduler()
+
+def initialize_scheduler():
+    # Schedule the task to run every 1 minute
+    scheduler.add_job(func=send_vaccine_notification, trigger="interval", minutes=1)
+    scheduler.start()
+
+@app.route('/')
+def home():
+    return "Flask app with vaccine notification system"
+
+if __name__ == "__main__":
+    initialize_scheduler()  # Start the scheduler when the app starts
+    try:
+        app.run(debug=True)
+    finally:
+        scheduler.shutdown()  # Shut down the scheduler when the app is stopped
