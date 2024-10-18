@@ -1,0 +1,92 @@
+{% extends "User/user_index.html" %}
+{% block body %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Scheme Cards</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .scheme-card {
+            max-width: 100%; /* Ensure cards take full width of column */
+            margin: 20px auto;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline */
+            display: flex; /* Enable flexbox */
+            flex-direction: column; /* Stack items vertically */
+            height: 350px; /* Set a fixed height for uniformity */
+        }
+        .scheme-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+            text-decoration: none; /* Remove underline on hover */
+        }
+        .card-header {
+            background-color: #FFE7CB; /* Light pastel green */
+            color: #000; /* Set text color to black */
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+            border-bottom: 0;
+            padding: 15px;
+        }
+        .card-body {
+            background-color: #FFF5E3; /* Lighter pastel green */
+            padding: 20px;
+            flex-grow: 1; /* Allow body to grow and fill the space */
+            display: flex; /* Enable flexbox */
+            flex-direction: column; /* Stack details and date vertically */
+            justify-content: space-between; /* Space between details and date */
+            overflow: hidden; /* Hide overflow */
+        }
+        .scheme-details {
+            font-size: 14px;
+            color: #000 !important; /* Set text color to black */
+            white-space: normal; /* Allow text to wrap */
+            overflow: hidden; /* Hide overflow */
+            display: -webkit-box; /* Required for line clamp */
+            -webkit-box-orient: vertical; /* Required for line clamp */
+            -webkit-line-clamp: 5; /* Limit to 5 lines */
+            flex-grow: 1; /* Allow details to grow */
+        }
+        .scheme-date {
+            font-size: 12px;
+            color: #000 !important; /* Set text color to black */
+            margin-top: 10px; /* Add margin to separate from details */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        {% for i in val %}
+        <div class="col-md-4"> <!-- Change this to col-lg-4 for larger screens -->
+            <a href="https://example.com/scheme-details" class="scheme-card">
+                <div class="card scheme-card">
+                    <div class="card-header">
+                        {{i['scheme_name']}}
+                    </div>
+                    <div class="card-body">
+                        <p class="scheme-details">
+                        {{i['details']}}
+                        </p>
+                        <p class="scheme-date">{{i['date']}}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+{% endblock %}

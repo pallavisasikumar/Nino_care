@@ -788,7 +788,7 @@ def view_programs():
 def view_schemes():
     qry = "SELECT * FROM `gov_schemes`"
     res = selectall(qry)
-    return render_template("User/view_schemes.html", val=res)
+    return render_template("User/view_scheme_card.html", val=res)
 
 
 @app.route("/ashaworker_view_programs")
