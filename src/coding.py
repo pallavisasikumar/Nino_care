@@ -927,6 +927,27 @@ def send_vaccine_notification():
                 email = j['email']
                 send_email(email, message, subject)
 
+        qry = "SELECT * FROM `programs` WHERE DATEDIFF(`date`, CURDATE()) IN (1)"
+        res = selectall(qry)
+
+        for i in res:
+            print("programs================")
+            qry = "SELECT * FROM `user` WHERE `panchayath_id` = %s AND `l_id` NOT IN (SELECT `l_id` FROM `program_notified_users` where program_id=%s)"
+            res2 = selectall2(qry, (i['panchayath_id'], i['id']))
+
+            print("=============res2", res2)
+
+            for j in res2:
+                qry = "INSERT INTO `program_notified_users` VALUES(NULL, %s, %s, CURDATE())"
+                iud(qry, (j['l_id'], i['id']))
+
+                subject = i['program name']
+                message = i['details']
+                email = j['email']
+                send_email(email, message, subject)
+
+
+
     except Exception as e:
         print(str(e))
 
