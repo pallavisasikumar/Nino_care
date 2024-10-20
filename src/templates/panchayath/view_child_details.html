@@ -1,4 +1,4 @@
-{% extends "Ashaworker/ashaworker_index.html" %}
+{% extends "panchayath/panchayath_index.html" %}
 {% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
@@ -9,31 +9,22 @@
 <form id="form1" name="form1" method="post" action="add_child">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
-      <th scope="col">Parent Name </th>
       <th scope="col">Child Name </th>
       <th scope="col">Gender </th>
       <th scope="col">Date of Birth </th>
-      <th scope="col">&nbsp;</th>
     </tr>
 
     {% for i in val %}
 
     <tr>
-      <td>{{i['pname']}}</td>
       <td>{{i['name']}}</td>
       <td>{{i['gender']}}</td>
       <td>{{i['dob']}}</td>
-      <td>
-      <p><a href="delete_child?id={{i['id']}}">Delete</a></p></td>
     </tr>
 
     {% endfor %}
 
-    <tr align="center">
-      <td colspan="5"><label>
-        <input type="submit" name="Submit" value="ADD" class="btn btn-primary"/>
-      </label></td>
-    </tr>
+
   </table>
 </form>
 </body>

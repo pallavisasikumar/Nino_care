@@ -6,25 +6,25 @@
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="insert_code">
+<form id="form1" name="form1" method="post" action="edit_code">
   <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="row">Name</th>
       <td><label>
-        <input type="text" name="textfield" required pattern="[A-Z a-z.]{3,25}"/>
+        <input type="text" name="textfield" value="{{val['name']}}" required pattern="[A-Z a-z.]{3,25}"/>
       </label></td>
     </tr>
     <tr>
       <th scope="row">Place</th>
-      <td><input type="text" name="textfield2" required/></td>
+      <td><input type="text" name="textfield2" value="{{val['place']}}" required/></td>
     </tr>
     <tr>
       <th scope="row">Post</th>
-      <td><input type="text" name="textfield3" required/></td>
+      <td><input type="text" name="textfield3" value="{{val['post']}}" required/></td>
     </tr>
     <tr>
       <th scope="row">Pin</th>
-      <td><input type="text" name="textfield4" required pattern="[0-9]{6}"/></td>
+      <td><input type="text" name="textfield4" value="{{val['pin']}}" required pattern="[0-9]{6}"/></td>
     </tr>
 
 
@@ -42,42 +42,35 @@
 <!--    </tr>-->
     <tr>
       <th scope="row">Phone Number </th>
-      <td><input type="text" name="textfield5" required pattern="[6789][0-9]{9}"/></td>
+      <td><input type="text" name="textfield5" value="{{val['ph_no']}}" required pattern="[6789][0-9]{9}"/></td>
     </tr>
     <tr>
       <th scope="row">Email</th>
-      <td><input type="text" name="textfield6" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}"/></td>
+      <td><input type="text" name="textfield6" value="{{val['email']}}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}"/></td>
     </tr>
     <tr>
       <th scope="row">Pregnant</th>
       <td><label>
         <select name="select2">
-          <option>Yes</option>
-          <option>No</option>
+          <option {% if val['type'] == "Yes" %} selected {% endif %} >Yes</option>
+          <option {% if val['type'] == "No" %} selected {% endif %} >No</option>
         </select>
       </label></td>
     </tr>
      <tr>
       <th scope="row">Number of child</th>
-      <td><input type="number" name="child" required/></td>
+      <td><input type="number" name="child" value="{{val['no_of_child']}}" required/></td>
     </tr>
     <tr>
       <th scope="row">Latitude</th>
-      <td><input type="text" name="textfield7" required/></td>
+      <td><input type="text" name="textfield7" value="{{val['latitude']}}" required/></td>
     </tr>
     <tr>
       <th scope="row">Longitude</th>
-      <td><input type="text" name="textfield8" required/></td>
+      <td><input type="text" name="textfield8" value="{{val['longitude']}}" required/></td>
     </tr>
 
-    <tr>
-      <th scope="row">Username</th>
-      <td><input type="text" name="textfield9" required/></td>
-    </tr>
-    <tr>
-      <th scope="row">Password</th>
-      <td><input type="text" name="textfield10" required/></td>
-    </tr>
+
     <tr align="center">
       <th colspan="2" scope="row"><label>
         <input type="submit" name="Submit" value="SUBMIT" class="btn btn-primary" />

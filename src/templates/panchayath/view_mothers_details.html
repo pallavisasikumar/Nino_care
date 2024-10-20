@@ -15,6 +15,7 @@
       <td>Contact</td>
       <td>Number of children </td>
 	  <td>Location</td>
+	  <td>Child</td>
     </tr>
 
     {% for i in val %}
@@ -37,6 +38,9 @@
       </td>
       <td>{{i['no_of_child']}}</td>
 	  <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
+
+      <td><a href="panchayath_view_child_details?id={{i['l_id']}}">View</a> </td>
+
     </tr>
 
     {% endfor %}

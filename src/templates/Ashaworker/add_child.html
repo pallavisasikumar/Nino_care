@@ -1,38 +1,54 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends "Ashaworker/ashaworker_index.html" %}
+{% block body %}
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1">
+<form id="form1" name="form1" method="post" action="insert_child">
+  <table width="200" border="1" class="table table-hover table-striped">
     <tr>
       <th scope="row">Parent Name </th>
       <td><label>
-        <select name="select">
+        <select name="select" required>
+
+          {% for i in val %}
+          <option value="{{i['l_id']}}">{{i['name']}}</option>
+          {% endfor %}
+
         </select>
       </label></td>
     </tr>
     <tr>
       <th scope="row">Child Name </th>
       <td><label>
-        <input type="text" name="textfield" />
+        <input type="text" name="textfield" required/>
       </label></td>
+    </tr>
+     <tr>
+      <th>Gender</th>
+       <th>
+         <select name="gender">
+           <option>Male</option>
+           <option>Female</option>
+         </select>
+       </th>
     </tr>
     <tr>
       <th scope="row">Date Of Birth </th>
       <td><label>
-        <input type="date" name="textfield2" />
+        <input type="date" name="textfield2" required />
       </label></td>
     </tr>
-    <tr>
+    <tr align="center">
       <th colspan="2" scope="row"><label>
-        <input type="submit" name="Submit" value="ADD" />
+        <input type="submit" name="Submit" value="ADD" class="btn  btn-primary"/>
       </label></th>
     </tr>
+
   </table>
 </form>
 </body>
-</html>
+
+{% endblock %}

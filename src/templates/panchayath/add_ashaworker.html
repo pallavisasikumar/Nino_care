@@ -11,33 +11,33 @@
     <tr>
       <th scope="row">Name</th>
       <td><label>
-        <input type="text" name="textfield" />
+        <input type="text" name="textfield" required pattern="[A-Z a-z.]{3,25}"/>
       </label></td>
     </tr>
     <tr>
       <th scope="row">Post office </th>
-      <td><input type="text" name="textfield2" /></td>
+      <td><input type="text" name="textfield2" required/></td>
     </tr>
     <tr>
       <th scope="row">Place</th>
-      <td><input type="text" name="textfield3" /></td>
+      <td><input type="text" name="textfield3" required/></td>
     </tr>
     <tr>
       <th scope="row">Pincode</th>
-      <td><input type="text" name="textfield4" /></td>
+      <td><input type="text" name="textfield4" required pattern="[0-9]{6}"/></td>
     </tr>
     <tr>
       <th scope="row">Email</th>
-      <td><input type="text" name="textfield5" /></td>
+      <td><input type="text" name="textfield5" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}"/></td>
     </tr>
     <tr>
       <th scope="row">Phone</th>
-      <td><input type="text" name="textfield6" /></td>
+      <td><input type="text" name="textfield6" required pattern="[6789][0-9]{9}"/></td>
     </tr>
     <tr>
       <th scope="row">Area</th>
       <td><label>
-        <select name="select">
+        <select name="select" required>
 
            {% for i in val %}
 
@@ -51,12 +51,12 @@
 
     <tr>
       <th scope="row">username</th>
-      <td><input type="text" name="textfield7" /></td>
+      <td><input type="text" name="textfield7" required/></td>
     </tr>
 
     <tr>
       <th scope="row">password</th>
-      <td><input type="text" name="textfield8" /></td>
+      <td><input type="text" name="textfield8" required/></td>
     </tr>
 
     <tr align="center">

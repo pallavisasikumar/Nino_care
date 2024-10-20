@@ -33,7 +33,10 @@
       <td>{{i['no_of_child']}}</td>
       <td>{{i['type']}}</td>
       <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
-      <td><p><a href="delete_user?id={{i['l_id']}}">Delete</a></p></td>
+      <td>
+          <p><a href="delete_user?id={{i['l_id']}}">Delete</a></p>
+          <p><a href="edit_user?id={{i['l_id']}}">Edit</a></p>
+      </td>
     </tr>
 
     {% endfor %}

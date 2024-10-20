@@ -9,6 +9,21 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import google.generativeai as genai
 
 
+import functools
+
+def login_required(func):
+    @functools.wraps(func)
+    def secure_function():
+        if "lid" not in session:
+            return render_template('login_index.html')
+        return func()
+
+    return secure_function
+
+
+
+
+
 genai.configure(api_key="AIzaSyBAwI-VC--dAg9opup6ZihgFrwNHsipKkM")
 
 
@@ -25,6 +40,13 @@ app.config['MAIL_PASSWORD'] = 'ioon ywiq cqkk bfaf'
 @app.route('/')
 def login():
     return render_template("login_index.html")
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
 
 @app.route("/login_code",methods=['post'])
 def login_code():
@@ -123,16 +145,19 @@ def registration_code():
 
 
 @app.route("/admin_home")
+@login_required
 def admin_home():
     return render_template("Admin/admin_index.html")
 
 
 @app.route("/add_panchayath", methods=['post'])
+@login_required
 def add_panchayath():
     return render_template("Admin/add_panchayath.html")
 
 
 @app.route("/insert_panchayath", methods=["post"])
+@login_required
 def insert_panchayath():
     name = request.form["textfield"]
     taluk_name = request.form["textfield2"]
@@ -151,6 +176,7 @@ def insert_panchayath():
     return '''<script>alert("Successfully Inserted Panchayath");window.location="manage_panchayath"</script>'''
 
 @app.route("/delete_panchayath")
+@login_required
 def delete_panchayath():
     id = request.args.get('id')
     qry = "DELETE FROM `login` WHERE id=%s"
@@ -162,6 +188,7 @@ def delete_panchayath():
 
 
 @app.route("/edit_panchayath")
+@login_required
 def edit_panchayath():
     id = request.args.get('id')
     session['pid'] = id
@@ -171,6 +198,7 @@ def edit_panchayath():
 
 
 @app.route("/update_panchayath" , methods=['post'])
+@login_required
 def update_panchayath():
     print(request.form)
     name = request.form["textfield"]
@@ -191,6 +219,7 @@ def update_panchayath():
 
 
 @app.route("/insert_scheme", methods=["post"])
+@login_required
 def insert_scheme():
     name = request.form["textfield"]
     details = request.form["textfield2"]
@@ -202,6 +231,7 @@ def insert_scheme():
 
 
 @app.route("/delete_scheme")
+@login_required
 def delete_scheme():
     id=request.args.get('id')
     qry="DELETE FROM `gov_schemes` WHERE id=%s"
@@ -210,6 +240,7 @@ def delete_scheme():
 
 
 @app.route("/edit_scheme")
+@login_required
 def edit_scheme():
     id = request.args.get('id')
     session['sid'] = id
@@ -219,6 +250,7 @@ def edit_scheme():
 
 
 @app.route("/update_scheme", methods=['post'])
+@login_required
 def update_scheme():
     name = request.form["textfield"]
     details = request.form["textfield2"]
@@ -229,11 +261,13 @@ def update_scheme():
 
 
 @app.route("/add_scheme",methods=["post"])
+@login_required
 def add_scheme():
     return render_template("Admin/add_scheme.html")
 
 
 @app.route("/manage_panchayath")
+@login_required
 def manage_panchayath():
     qry = "SELECT * FROM `panchayath`"
     res = selectall(qry)
@@ -242,6 +276,7 @@ def manage_panchayath():
 
 
 @app.route("/manage_scheme")
+@login_required
 def manage_scheme():
     qry = "SELECT * FROM `gov_schemes`"
     res = selectall(qry)
@@ -250,6 +285,7 @@ def manage_scheme():
 
 
 @app.route("/select_taluks")
+@login_required
 def select_taluks():
     dist = request.args.get("dist")
     qry = "SELECT DISTINCT(`taluk_name`) FROM `panchayath` WHERE `district`=%s"
@@ -258,6 +294,7 @@ def select_taluks():
 
 
 @app.route("/select_panchayath")
+@login_required
 def select_panchayath():
     taluk_name = request.args.get("taluk")
     qry = "SELECT * FROM `panchayath` WHERE `taluk_name`=%s"
@@ -267,6 +304,7 @@ def select_panchayath():
 
 
 @app.route("/view_report")
+@login_required
 def view_report():
 
     qry = "SELECT DISTINCT(`district`) FROM `panchayath` "
@@ -278,6 +316,7 @@ def view_report():
 
 
 @app.route("/filter_report", methods = ['post'])
+@login_required
 def filter_report():
     panchayath = request.form['pid']
     print(request.form)
@@ -292,11 +331,13 @@ def filter_report():
 
 
 @app.route("/add_food_details",methods=["post"])
+@login_required
 def add_food_details():
     return render_template("Admin/add_food_details.html")
 
 
 @app.route("/insert_food", methods=["post"])
+@login_required
 def insert_food():
     food = request.form["textfield"]
     image = request.files["file1"]
@@ -314,6 +355,7 @@ def insert_food():
 
 
 @app.route("/delete_food")
+@login_required
 def delete_food():
     id=request.args.get('id')
     qry="DELETE FROM `food` WHERE id=%s"
@@ -322,6 +364,7 @@ def delete_food():
 
 
 @app.route("/edit_food")
+@login_required
 def edit_food():
     id = request.args.get('id')
     session['fid'] = id
@@ -331,6 +374,7 @@ def edit_food():
 
 
 @app.route("/update_food", methods=['post'])
+@login_required
 def update_food():
 
     try:
@@ -360,6 +404,7 @@ def update_food():
 
 
 @app.route("/manage_food")
+@login_required
 def manage_food():
     qry = "SELECT * FROM food"
     res = selectall(qry)
@@ -368,11 +413,13 @@ def manage_food():
 
 #panchayath==========================================================================
 @app.route("/panchayath_home")
+@login_required
 def panchayath_home():
     return render_template("panchayath/panchayath_index.html")
 
 
 @app.route("/manage_area")
+@login_required
 def manage_area():
     qry = "SELECT * FROM `area` WHERE pid=%s"
     res = selectall2(qry, session['lid'])
@@ -393,6 +440,7 @@ def insert_area():
 
 
 @app.route("/delete_area")
+@login_required
 def delete_area():
     id = request.args.get('id')
     qry = "DELETE FROM `area` WHERE id=%s"
@@ -401,6 +449,7 @@ def delete_area():
 
 
 @app.route('/add_ashaworker', methods=['post'])
+@login_required
 def add_ashaworker():
     qry = "select * from area where pid=%s"
     res = selectall2(qry, session['lid'])
@@ -408,26 +457,39 @@ def add_ashaworker():
 
 
 @app.route("/insert_ashaworker", methods=['post'])
+@login_required
 def insert_ashaworker():
-    name = request.form['textfield']
-    post_office = request.form['textfield2']
-    place = request.form['textfield3']
-    pincode = request.form['textfield4']
-    email = request.form['textfield5']
-    phone = request.form['textfield6']
-    area = request.form['select']
-    username = request.form['textfield7']
-    password = request.form['textfield8']
+    try:
+        name = request.form['textfield']
+        post_office = request.form['textfield2']
+        place = request.form['textfield3']
+        pincode = request.form['textfield4']
+        email = request.form['textfield5']
+        phone = request.form['textfield6']
+        area = request.form['select']
+        username = request.form['textfield7']
+        password = request.form['textfield8']
 
-    qry = "INSERT INTO login VALUES(NULL,%s,%s,'ashaworker')"
-    id = iud(qry, (username, password))
 
-    qry = "INSERT INTO `ashaworker` VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    iud(qry, (id,session['lid'],name, post_office, place, pincode, email, phone, area))
-    return '''<script>alert("Successfully Added Ashaworker");window.location="manage_ashaworker"</script>'''
+        qry = "SELECT * FROM `login` WHERE `username`=%s"
+        res = selectone(qry, username)
+
+        if res is None:
+
+            qry = "INSERT INTO login VALUES(NULL,%s,%s,'ashaworker')"
+            id = iud(qry, (username, password))
+
+            qry = "INSERT INTO `ashaworker` VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            iud(qry, (id,session['lid'],name, post_office, place, pincode, email, phone, area))
+            return '''<script>alert("Successfully Added Ashaworker");window.location="manage_ashaworker"</script>'''
+        else:
+            return '''<script>alert("Username already exists");window.location="manage_ashaworker"</script>'''
+    except:
+        return '''<script>alert("Email or Phone already exists");window.location="manage_ashaworker"</script>'''
 
 
 @app.route("/manage_reports")
+@login_required
 def manage_reports():
     qry = "SELECT * FROM `reports` WHERE panchayath_id = %s"
     res = selectall2(qry, session['lid'])
@@ -435,11 +497,13 @@ def manage_reports():
 
 
 @app.route("/add_report", methods=['post'])
+@login_required
 def add_report():
     return render_template("panchayath/add_report.html")
 
 
 @app.route("/insert_report", methods=['post'])
+@login_required
 def insert_report():
     report = request.files['file1']
 
@@ -453,6 +517,7 @@ def insert_report():
 
 
 @app.route("/delete_report")
+@login_required
 def delete_report():
     id = request.args.get('id')
 
@@ -463,6 +528,7 @@ def delete_report():
 
 
 @app.route("/delete_ashaworker")
+@login_required
 def delete_ashaworker():
     id = request.args.get('id')
     qry = "DELETE FROM `login` WHERE id=%s"
@@ -474,6 +540,7 @@ def delete_ashaworker():
 
 
 @app.route("/edit_ashaworker")
+@login_required
 def edit_ashaworker():
     id = request.args.get('id')
     session['aid'] = id
@@ -487,6 +554,7 @@ def edit_ashaworker():
 
 
 @app.route("/update_ashaworker", methods=['post'])
+@login_required
 def update_ashaworker():
     name = request.form['textfield']
     post_office = request.form['textfield2']
@@ -503,11 +571,13 @@ def update_ashaworker():
 
 
 @app.route("/add_program", methods=['post'])
+@login_required
 def add_program():
     return render_template("panchayath/add_program.html")
 
 
 @app.route("/insert_program", methods=['post'])
+@login_required
 def insert_program():
     program = request.files['textfield']
 
@@ -575,6 +645,7 @@ def insert_program():
 
 
 @app.route("/delete_program")
+@login_required
 def delete_program():
     id = request.args.get('id')
 
@@ -585,11 +656,13 @@ def delete_program():
 
 
 @app.route("/add_vaccine_details", methods=['post'])
+@login_required
 def add_vaccine_details():
     return render_template("panchayath/add_vaccine_details.html")
 
 
 @app.route("/insert_vaccine_details", methods=['post'])
+@login_required
 def insert_vaccine_details():
     vaccine_name = request.form['textfield']
     details = request.form['textfield2']
@@ -632,6 +705,7 @@ def insert_vaccine_details():
 
 
 @app.route("/delete_vaccination_details")
+@login_required
 def delete_vaccination_details():
     id = request.args.get('id')
 
@@ -642,6 +716,7 @@ def delete_vaccination_details():
 
 
 @app.route("/edit_vaccination_details")
+@login_required
 def edit_vaccination_details():
     id = request.args.get('id')
     session['vid'] = id
@@ -652,6 +727,7 @@ def edit_vaccination_details():
 
 
 @app.route("/update_vaccination_details", methods=['post'])
+@login_required
 def update_vaccination_details():
     vaccine_name = request.form['textfield']
     details = request.form['textfield2']
@@ -665,6 +741,7 @@ def update_vaccination_details():
 
 
 @app.route("/manage_ashaworker")
+@login_required
 def manage_ashaworker():
     qry = "SELECT `ashaworker`.*,`area`.area AS area_name FROM `ashaworker` JOIN `area` ON `ashaworker`.`area`=`area`.id WHERE `panchayath_id`=%s"
     res = selectall2(qry, session['lid'])
@@ -672,6 +749,7 @@ def manage_ashaworker():
 
 
 @app.route("/manage_panchayath_program")
+@login_required
 def manage_panchayath_program():
     qry="SELECT * FROM `programs` WHERE `panchayath_id`=%s"
     res=selectall2(qry,session['lid'])
@@ -679,6 +757,7 @@ def manage_panchayath_program():
 
 
 @app.route("/view_food")
+@login_required
 def view_food():
     qry = "SELECT * FROM `food`"
     res = selectall(qry)
@@ -686,6 +765,7 @@ def view_food():
 
 
 @app.route("/manage_vaccination_details")
+@login_required
 def manage_vaccination_details():
     qry="SELECT * FROM `vaccine` WHERE `panchayath_id`=%s"
     res = selectall2(qry, session['lid'])
@@ -698,23 +778,65 @@ def view_mothers_details():
     res = selectall2(qry, session['lid'])
     return render_template("panchayath/view_mothers_details.html", val=res)
 
+
+@app.route("/panchayath_view_child_details")
+@login_required
+def panchayath_view_child_details():
+    id = request.args.get('id')
+    qry = "SELECT * FROM `child` WHERE `parent_id`=%s"
+    res = selectall2(qry,id)
+    return render_template("panchayath/view_child_details.html", val=res)
+
+
 #ashaworker============================================================================
 @app.route("/ashaworker_home")
+@login_required
 def ashaworker_home():
     return render_template("Ashaworker/ashaworker_index.html")
 
 
-@app.route("/add_child")
+@app.route("/add_child", methods=['post'])
+@login_required
 def add_child():
-    return render_template("Ashaworker/add_child.html")
+    qry = "SELECT * FROM `user` JOIN `ashaworker` ON `user`.`area` = `ashaworker`.area WHERE `ashaworker`.l_id=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("Ashaworker/add_child.html", val=res)
+
+
+@app.route("/insert_child", methods=['post'])
+@login_required
+def insert_child():
+    parent = request.form['select']
+    name = request.form['textfield']
+    gender = request.form['gender']
+    dob = request.form['textfield2']
+
+    qry = "INSERT INTO `child` VALUES(NULL, %s, %s, %s, %s)"
+    iud(qry,(parent, name, gender, dob))
+
+    return '''<script>alert("Successfully added");window.location="manage_child_details"</script>'''
+
+
+@app.route("/delete_child")
+@login_required
+def delete_child():
+    id = request.args.get('id')
+    qry = "DELETE FROM `child` WHERE id =%s"
+    iud(qry, id)
+    return '''<script>alert("Successfully added");window.location="manage_child_details"</script>'''
+
 
 
 @app.route("/manage_child_details")
+@login_required
 def manage_child_details():
-    return render_template("Ashaworker/manage_child_details.html")
+    qry = "SELECT `user`.name as pname, `child`.* FROM `child` JOIN `user` ON `child`.`parent_id`=`user`.l_id JOIN `ashaworker` ON `user`.area=`ashaworker`.area WHERE `ashaworker`.`l_id`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("Ashaworker/manage_child_details.html", val=res)
 
 
 @app.route("/manage_users")
+@login_required
 def manage_users():
     qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area where ashaworker.l_id=%s"
     res = selectall2(qry, session['lid'])
@@ -722,38 +844,52 @@ def manage_users():
 
 
 @app.route("/add_user", methods=['post'])
+@login_required
 def add_user():
     return render_template("/Ashaworker/add_user.html")
 
 
 @app.route("/insert_code", methods=['post'])
+@login_required
 def insert_code():
-    name = request.form['textfield']
-    place=request.form['textfield2']
-    post=request.form['textfield3']
-    pin=request.form['textfield4']
-    ph_no=request.form['textfield5']
-    email=request.form['textfield6']
-    pregnant=request.form['select2']
-    number_of_child=request.form['child']
-    latitude=request.form['textfield7']
-    longitude=request.form['textfield8']
-    username=request.form['textfield9']
-    password=request.form['textfield10']
+    try:
+        name = request.form['textfield']
+        place=request.form['textfield2']
+        post=request.form['textfield3']
+        pin=request.form['textfield4']
+        ph_no=request.form['textfield5']
+        email=request.form['textfield6']
+        pregnant=request.form['select2']
+        number_of_child=request.form['child']
+        latitude=request.form['textfield7']
+        longitude=request.form['textfield8']
+        username=request.form['textfield9']
+        password=request.form['textfield10']
 
-    qry = "INSERT INTO login VALUES(NULL,%s,%s,'user')"
-    id = iud(qry,(username,password))
+        qry = "SELECT * FROM `login` WHERE `username`=%s"
+        res = selectone(qry, username)
 
-    qry = "SELECT * FROM  `ashaworker` WHERE l_id=%s"
-    res = selectone(qry, session['lid'])
+        if res is None:
 
-    qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    iud(qry,(id, res['panchayath_id'], name, place, post, pin, res['area'], ph_no, email, number_of_child, pregnant, latitude, longitude))
+            qry = "INSERT INTO login VALUES(NULL,%s,%s,'user')"
+            id = iud(qry,(username,password))
 
-    return '''<script>alert("Successfully Added");window.location="/manage_users"</script>'''
+            qry = "SELECT * FROM  `ashaworker` WHERE l_id=%s"
+            res = selectone(qry, session['lid'])
+
+            qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            iud(qry,(id, res['panchayath_id'], name, place, post, pin, res['area'], ph_no, email, number_of_child, pregnant, latitude, longitude))
+
+            return '''<script>alert("Successfully Added");window.location="/manage_users"</script>'''
+
+        else:
+            return '''<script>alert("Username already exists");window.location="/manage_users"</script>'''
+    except:
+        return '''<script>alert("Email or phone already exists");window.location="/manage_users"</script>'''
 
 
 @app.route("/verify_users")
+@login_required
 def verify_users():
     qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending'"
     res = selectall(qry)
@@ -761,6 +897,7 @@ def verify_users():
 
 
 @app.route("/delete_user")
+@login_required
 def delete_user():
     id = request.args.get('id')
     qry = "delete from login where id=%s"
@@ -771,6 +908,7 @@ def delete_user():
 
 
 @app.route("/accept_user")
+@login_required
 def accept_user():
     id = request.args.get('id')
     qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
@@ -779,6 +917,7 @@ def accept_user():
 
 
 @app.route("/reject_user")
+@login_required
 def reject_user():
     id = request.args.get('id')
     qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
@@ -787,17 +926,20 @@ def reject_user():
 
 
 @app.route("/view_programs_schemes")
+@login_required
 def view_programs_schemes():
     return render_template("Ashaworker/view_programs_schemes.html")
 
 
 #User===========================================================================
 @app.route("/user_home")
+@login_required
 def user_home():
     return render_template("User/user_index.html")
 
 
 @app.route("/view_food_details")
+@login_required
 def view_food_details():
     qry = "SELECT * FROM `food`"
     res = selectall(qry)
@@ -805,6 +947,7 @@ def view_food_details():
 
 
 @app.route("/view_programs")
+@login_required
 def view_programs():
     qry = "SELECT * FROM `programs` JOIN `user` ON `programs`.`panchayath_id`=`user`.`panchayath_id` WHERE `user`.`l_id`=%s"
     res = selectall2(qry, session['lid'])
@@ -812,6 +955,7 @@ def view_programs():
 
 
 @app.route("/view_schemes")
+@login_required
 def view_schemes():
     qry = "SELECT * FROM `gov_schemes`"
     res = selectall(qry)
@@ -819,6 +963,7 @@ def view_schemes():
 
 
 @app.route("/view_scheme_details")
+@login_required
 def view_scheme_details():
     id = request.args.get('id')
     qry = "SELECT * FROM `gov_schemes` where id=%s"
@@ -827,6 +972,7 @@ def view_scheme_details():
 
 
 @app.route("/ashaworker_view_programs")
+@login_required
 def ashaworker_view_programs():
     qry = "SELECT * FROM `programs` JOIN `ashaworker` ON `programs`.`panchayath_id`=`ashaworker`.`panchayath_id` WHERE `ashaworker`.`l_id`=%s"
     res = selectall2(qry, session['lid'])
@@ -834,6 +980,7 @@ def ashaworker_view_programs():
 
 
 @app.route("/ashaworker_view_schemes")
+@login_required
 def ashaworker_view_schemes():
     qry = "SELECT * FROM `gov_schemes`"
     res = selectall(qry)
@@ -841,11 +988,13 @@ def ashaworker_view_schemes():
 
 
 @app.route("/view_vaccine_details")
+@login_required
 def view_vaccine_details():
     return render_template("User/view_vaccine_details.html")
 
 
 @app.route("/view_vaccine_details2", methods=['post'])
+@login_required
 def view_vaccine_details2():
     type = request.form['select']
 
@@ -855,10 +1004,12 @@ def view_vaccine_details2():
 
 
 @app.route("/forgot_password")
+@login_required
 def forgot_password():
     return  render_template("forgot_password.html")
 
 @app.route("/forgot_password_otp", methods=['post'])
+@login_required
 def forgot_password_otp():
     type= request.form['type']
     gmail = request.form['textfield']
@@ -921,6 +1072,7 @@ def forgot_password_otp():
 
 
 @app.route("/verify_otp", methods=['post'])
+@login_required
 def verify_otp():
     otp = request.form['textfield']
 
@@ -931,6 +1083,7 @@ def verify_otp():
 
 
 @app.route("/update_password", methods=['post'])
+@login_required
 def update_password():
     new_password = request.form['textfield']
     qry = "UPDATE `login` SET PASSWORD = %s where id=%s"
@@ -1019,16 +1172,19 @@ def initialize_scheduler():
     scheduler.start()
 
 @app.route('/')
+@login_required
 def home():
     return "Flask app with vaccine notification system"
 
 
 @app.route("/chat_with_gemini")
+@login_required
 def chat_with_gemini():
     return render_template("User/chat_with_ai.html")
 
 
 @app.route('/gemini_chat', methods=['POST'])
+@login_required
 def gemini_chat():
     # Get the message sent by the user
     user_message = request.json.get('message')
@@ -1042,6 +1198,43 @@ def gemini_chat():
         return jsonify({'reply': response.text})
 
     return jsonify({'reply': 'Error: No message received'}), 400
+
+
+@app.route("/edit_user")
+@login_required
+def edit_user():
+    id = request.args.get('id')
+    session['user_id'] = id
+    qry = "SELECT * FROM `user` WHERE l_id=%s"
+    res = selectone(qry, id)
+
+    return render_template("Ashaworker/edit_user.html", val=res)
+
+
+
+@app.route("/edit_code", methods=['post'])
+@login_required
+def edit_code():
+    try:
+        name = request.form['textfield']
+        place=request.form['textfield2']
+        post=request.form['textfield3']
+        pin=request.form['textfield4']
+        ph_no=request.form['textfield5']
+        email=request.form['textfield6']
+        pregnant=request.form['select2']
+        number_of_child=request.form['child']
+        latitude=request.form['textfield7']
+        longitude=request.form['textfield8']
+
+        qry = "UPDATE `user` SET `name`=%s, `place`=%s, `post`=%s, `pin`=%s, `ph_no`=%s, email=%s, `no_of_child`=%s, `type`=%s, `latitude`=%s, `longitude`=%s WHERE `l_id`=%s"
+        iud(qry,( name, place, post, pin, ph_no, email, number_of_child, pregnant, latitude, longitude, session['user_id']))
+
+        return '''<script>alert("Successfully Edited");window.location="/manage_users"</script>'''
+
+    except:
+        return '''<script>alert("Email or phone already exists");window.location="/manage_users"</script>'''
+
 
 
 if __name__ == "__main__":
