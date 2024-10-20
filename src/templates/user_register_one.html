@@ -3,22 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>User register</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-
 
 <form action="user_registration#about" method="post">
   <table class="table table-hover table-striped">
     <tr>
+      <th>District</th>
+      <th>
+        <select name="dist" id="district" required>
+          <option value="">Select District</option>
+          <option>Kasargod</option>
+          <option>Kannur</option>
+          <option>Wayanad</option>
+          <option>Kozhikode</option>
+          <option>Malappuram</option>
+          <option>Palakkad</option>
+          <option>Thrissur</option>
+          <option>Ernakulam</option>
+          <option>Idukki</option>
+          <option>Kottayam</option>
+          <option>Alappuza</option>
+          <option>Pathanamthitta</option>
+          <option>Kollam</option>
+          <option>Thiruvananthappuram</option>
+        </select>
+      </th>
+    </tr>
+
+    <tr>
+      <th>Taluk</th>
+      <th>
+        <select name="taluk" id="taluk" required>
+          <option value="">Select Taluk</option>
+          <!-- Taluks will be dynamically populated based on selected district -->
+        </select>
+      </th>
+    </tr>
+
+    <tr>
       <th>Panchayath</th>
       <td>
-
-        <select name="select">
-          {% for i in  val %}
-          <option value="{{i['l_id']}}">{{i['name']}}</option>
-          {% endfor %}
+        <select name="select" id="panchayath" required>
+          <option value="">Select Panchayath</option>
+          <!-- Panchayaths will be dynamically populated based on selected taluk -->
         </select>
-
       </td>
     </tr>
 
@@ -29,7 +59,40 @@
   </table>
 </form>
 
+<script>
+    // Populate Taluks based on the selected District
+    $("#district").change(function() {
+        var district = $(this).val();
+        $.ajax({
+            url: "/select_taluks2",
+            type: "GET",
+            data: { dist: district },
+            success: function(data) {
+                $("#taluk").empty().append('<option value="">Select Taluk</option>');
+                $.each(data, function(index, item) {
+                    $("#taluk").append('<option value="'+item.taluk_name+'">'+item.taluk_name+'</option>');
+                });
+            }
+        });
+    });
+
+    // Populate Panchayaths based on the selected Taluk
+    $("#taluk").change(function() {
+        var district = $("#district").val();
+        var taluk = $(this).val();
+        $.ajax({
+            url: "/user_reg_filter",
+            type: "POST",
+            data: { dist: district, taluk: taluk },
+            success: function(data) {
+                $("#panchayath").empty().append('<option value="">Select Panchayath</option>');
+                $.each(data, function(index, item) {
+                    $("#panchayath").append('<option value="'+item.l_id+'">'+item.name+'</option>');
+                });
+            }
+        });
+    });
+</script>
 
 </body>
-<!--</html>-->
 {% endblock %}

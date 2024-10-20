@@ -1,39 +1,109 @@
 {% extends "User/user_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Vaccine Information</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f9fc; /* Light background */
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+            max-width: 1200px; /* Max-width for the container */
+        }
+
+        .form-group {
+            display: flex; /* Use flexbox for better layout */
+            align-items: center;
+            margin-bottom: 20px; /* Space between form elements */
+        }
+
+        select, input[type="submit"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-left: 10px; /* Space between select and button */
+            flex-grow: 1; /* Allow select to take available space */
+        }
+
+        input[type="submit"] {
+            background-color: #4a90e2; /* Button background */
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
+            width: 120px; /* Fixed width for the button */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #357ab7; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid layout */
+            gap: 20px; /* Space between cards */
+            margin-top: 20px; /* Space above cards */
+        }
+
+        .card {
+            background-color: #ffffff; /* White for card background */
+            border: 1px solid #ddd; /* Border around card */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+            padding: 20px; /* Padding inside card */
+            transition: transform 0.3s ease; /* Smooth transition on hover */
+            position: relative; /* Position for overlay effect */
+            display: flex; /* Flexbox for vertical layout */
+            flex-direction: column; /* Stack items vertically */
+            justify-content: space-between; /* Space between items */
+        }
+
+        .card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+        }
+
+        .card h5 {
+            margin-bottom: 15px; /* Space below heading */
+            color: #333; /* Darker text color */
+        }
+
+        .card p {
+            color: #555; /* Gray text color for details */
+        }
+
+        .card .date {
+            margin-top: auto; /* Push date to bottom of the card */
+            font-style: italic; /* Italic for date */
+            color: #888; /* Lighter color for date */
+        }
+    </style>
 </head>
 
 <body>
 <form id="form1" name="form1" method="post" action="view_vaccine_details2">
-  <table width="200" border="1" class="table table-hover table-striped table-bordered">
-    <tr>
-      <th colspan="3" scope="col"><label>
-        <select name="select">
-          <option>Child</option>
-          <option>Mother</option>
-        </select>
-        <input type="submit" name="Submit" value="Search" />
-      </label></th>
-    </tr>
-    <tr>
-      <td>Vaccine Name </td>
-      <td>Details</td>
-      <td>Date</td>
-    </tr>
-
-    {% for i in val %}
-
-    <tr>
-      <td>{{i['vaccine_name']}}</td>
-      <td>{{i['details']}}</td>
-      <td>{{i['date']}}</td>
-    </tr>
-
-    {% endfor %}
-
-  </table>
+    <div class="container">
+        <div class="form-group">
+            <label for="vaccine-select">Select:</label>
+            <select id="vaccine-select" name="select">
+                <option {% if t=="Child" %} selected {% endif %}>Child</option>
+                <option {% if t=="Mother" %} selected {% endif %}>Mother</option>
+            </select>
+            <input type="submit" name="Submit" value="Search" />
+        </div>
+        <div class="card-container">
+            {% for i in val %}
+            <div class="card">
+                <h5>{{i['vaccine_name']}}</h5>
+                <p><strong>Details:</strong> {{i['details']}}</p>
+                <p class="date"><strong>Date:</strong> {{i['date']}}</p> <!-- Date at the bottom of the card -->
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </form>
 </body>
 {% endblock %}

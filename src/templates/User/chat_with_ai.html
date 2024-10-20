@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chat</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 80vh;
+            position: relative; /* To position the button */
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a90e2;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #fafafa;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .chat-box p {
+            margin: 10px 0;
+        }
+
+        .user-message {
+            text-align: right;
+            color: #007bff;
+        }
+
+        .ai-message {
+            text-align: left;
+            color: #333;
+        }
+
+        .input-box {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-box input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding-left: 20px;
+            outline: none;
+        }
+
+        .input-box button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-box button:hover {
+            background-color: #357ab8;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px; /* Adjust the position as needed */
+            left: 20px; /* Adjust the position as needed */
+            background: linear-gradient(90deg, #4a90e2, #357ab8);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 15px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(90deg, #357ab8, #4a90e2);
+            transform: translateY(-2px);
+        }
+
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-block;
+            width: 60px;
+            text-align: center;
+        }
+
+        .loading-dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4a90e2;
+            animation: bounce 1.2s infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <button class="back-button" onclick="window.location.href='/user_home'">Back</button>
+        <h2>Chat with Gemini AI</h2>
+        <div id="chat-box" class="chat-box">
+            <!-- Chat history will appear here -->
+        </div>
+        <form id="chat-form" class="input-box">
+            <input type="text" id="user-input" placeholder="Type your message..." required />
+            <button type="submit"><i class="bi bi-send"></i> Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() === '') return;
+
+            // Add user's message to chat
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p class="user-message"><strong>You:</strong> ${userInput}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+
+            // Show loading animation
+            const loadingAnimation = `<p class="ai-message"><strong>Gemini AI:</strong> <span class="loading-dots"><span></span><span></span><span></span></span></p>`;
+            chatBox.innerHTML += loadingAnimation;
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+
+            // Fetch Gemini AI response
+            const response = await fetch('/gemini_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            const data = await response.json();
+
+            // Remove loading animation and add AI's response to chat
+            chatBox.innerHTML = chatBox.innerHTML.replace(loadingAnimation, `<p class="ai-message"><strong>Gemini AI:</strong> ${data.reply}</p>`);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+
+            // Clear input field
+            document.getElementById('user-input').value = '';
+        });
+    </script>
+</body>
+
+</html>

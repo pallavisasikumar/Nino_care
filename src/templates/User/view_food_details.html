@@ -1,32 +1,99 @@
 {% extends "User/user_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .food-item {
+            background-color: #ffffff; /* White background for each item */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added background color transition */
+            position: relative; /* Required for positioning the pop-up */
+        }
+
+        .food-item:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+            background-color: #f1f1f1; /* Light grey background on hover */
+        }
+
+        .food-image {
+            width: 100px; /* Set a fixed width for images */
+            height: 100px; /* Set a fixed height for images */
+            border-radius: 10px; /* Rounded corners for images */
+            object-fit: cover; /* Cover the area without distortion */
+            margin-right: 15px; /* Space between image and text */
+            transition: transform 0.3s ease; /* Animation for image scaling */
+        }
+
+        .food-image:hover {
+            transform: scale(1.1); /* Slightly enlarge image on hover */
+        }
+
+        .food-details {
+            flex-grow: 1; /* Allow details to take remaining space */
+        }
+
+        .food-type {
+            font-weight: bold; /* Bold for food type */
+            color: #6c757d; /* Grey color for food type */
+            margin-top: 5px; /* Spacing above type */
+        }
+
+        .food-description {
+            font-size: 14px; /* Adjust font size for better readability */
+            color: #333; /* Dark text color for contrast */
+            margin: 5px 0; /* Space between lines */
+            max-height: 50px; /* Limit height to prevent overflow */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Show ellipsis for overflow text */
+            display: -webkit-box; /* Required for line clamping */
+            -webkit-box-orient: vertical; /* Required for line clamping */
+            -webkit-line-clamp: 3; /* Limit to 3 lines */
+        }
+
+        /* Hover effect to show details */
+        .food-item:hover .food-description {
+            max-height: none; /* Allow full height on hover */
+            overflow: visible; /* Show overflow */
+        }
+    </style>
 </head>
-
 <body>
-<form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1" class="table table-hover table-striped">
-    <tr>
-      <th scope="col">Food</th>
-      <th scope="col">Details</th>
-      <th scope="col">Image</th>
-      <th scope="col">Type</th>
-    </tr>
-    {% for i in val%}
-    <tr>
-      <td>{{i['food']}}</td>
-      <td>{{i['details']}}</td>
-      <td><img src="../static/uploads/{{i['image']}}" width="200" height="200"> </td>
-      <td>{{i['type']}}</td>
 
-    </tr>
+<div class="container">
+    <h2 class="my-4">Food Items</h2>
+    <form id="form1" name="form1" method="post" action="">
+        <div class="food-list">
+            {% for i in val %}
+            <div class="food-item">
+                <img src="../static/uploads/{{i['image']}}" class="food-image" alt="{{i['food']}}">
+                <div class="food-details">
+                    <h5>{{i['food']}}</h5>
+                    <p class="food-description" style="color:#000">{{i['details']}}</p>
+                    <p class="food-type" style="color:#000">{{i['type']}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
 
-    {% endfor %}
-
-  </table>
-</form>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<!--</html>-->
 {% endblock %}

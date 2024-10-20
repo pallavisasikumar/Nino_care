@@ -6,10 +6,10 @@ from flask_mail import *
 from email import encoders
 import random
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime
+import google.generativeai as genai
 
 
-from threading import Timer
+genai.configure(api_key="AIzaSyBAwI-VC--dAg9opup6ZihgFrwNHsipKkM")
 
 
 app = Flask(__name__)
@@ -49,13 +49,29 @@ def login_code():
     elif res['type']=="user":
         session['lid'] = res['id']
         return '''<script>alert("Welcome User");window.location="user_home"</script>'''
+    else:
+        return '''<script>alert("Invalid Username or Password");window.location="/"</script>'''
 
 
 @app.route("/user_reg1")
 def user_reg1():
-    qry = "SELECT * FROM `panchayath`"
-    res = selectall(qry)
-    return render_template("user_register_one.html", val=res)
+
+    return render_template("user_register_one.html")
+
+@app.route("/select_taluks2")
+def select_taluks2():
+    dist = request.args.get("dist")
+    qry = "SELECT DISTINCT(`taluk_name`) FROM `panchayath` WHERE `district`=%s"
+    res = selectall2(qry, dist)
+    return jsonify(res)
+
+@app.route("/user_reg_filter", methods=['POST'])
+def user_reg_filter():
+    district = request.form['dist']
+    taluk = request.form['taluk']
+    qry = "SELECT * FROM `panchayath` WHERE `district`=%s AND `taluk_name`=%s"
+    res = selectall2(qry, (district, taluk))
+    return jsonify(res)
 
 @app.route("/user_registration", methods=['post'])
 def user_registration():
@@ -69,27 +85,38 @@ def user_registration():
 
 @app.route("/registration_code", methods=['post'])
 def registration_code():
-    name = request.form['textfield']
-    place=request.form['textfield2']
-    post=request.form['textfield3']
-    pin=request.form['textfield4']
-    area=request.form['select']
-    ph_no=request.form['textfield5']
-    email=request.form['textfield6']
-    pregnant=request.form['select2']
-    number_of_child=request.form['child']
-    latitude=request.form['textfield7']
-    longitude=request.form['textfield8']
-    username=request.form['textfield9']
-    password=request.form['textfield10']
+    try:
+        name = request.form['textfield']
+        place=request.form['textfield2']
+        post=request.form['textfield3']
+        pin=request.form['textfield4']
+        area=request.form['select']
+        ph_no=request.form['textfield5']
+        email=request.form['textfield6']
+        pregnant=request.form['select2']
+        number_of_child=request.form['child']
+        latitude=request.form['textfield7']
+        longitude=request.form['textfield8']
+        username=request.form['textfield9']
+        password=request.form['textfield10']
 
-    qry = "INSERT INTO login VALUES(NULL,%s,%s,'pending')"
-    id = iud(qry,(username,password))
+        qry = "SELECT * FROM `login` WHERE `username`=%s"
+        res = selectone(qry, username)
 
-    qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    iud(qry,(id, session['pid'], name, place, post, pin, area, ph_no, email, number_of_child, pregnant, latitude, longitude))
+        if res is None:
 
-    return '''<script>alert("Successfully registered");window.location="/"</script>'''
+            qry = "INSERT INTO login VALUES(NULL,%s,%s,'pending')"
+            id = iud(qry,(username,password))
+
+            qry = "INSERT INTO USER VALUES(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            iud(qry,(id, session['pid'], name, place, post, pin, area, ph_no, email, number_of_child, pregnant, latitude, longitude))
+
+            return '''<script>alert("Successfully registered");window.location="/"</script>'''
+        else:
+            return '''<script>alert("Username already exists");window.location="/"</script>'''
+
+    except:
+        return '''<script>alert("Email or phone already exists");window.location="/"</script>'''
 
 
 #Admin===============================================================================
@@ -689,8 +716,8 @@ def manage_child_details():
 
 @app.route("/manage_users")
 def manage_users():
-    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area"
-    res = selectall(qry)
+    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area where ashaworker.l_id=%s"
+    res = selectall2(qry, session['lid'])
     return render_template("Ashaworker/manage_users.html", val=res)
 
 
@@ -791,6 +818,14 @@ def view_schemes():
     return render_template("User/view_scheme_card.html", val=res)
 
 
+@app.route("/view_scheme_details")
+def view_scheme_details():
+    id = request.args.get('id')
+    qry = "SELECT * FROM `gov_schemes` where id=%s"
+    res = selectone(qry, id)
+    return render_template("User/view_scheme_details.html", val=res)
+
+
 @app.route("/ashaworker_view_programs")
 def ashaworker_view_programs():
     qry = "SELECT * FROM `programs` JOIN `ashaworker` ON `programs`.`panchayath_id`=`ashaworker`.`panchayath_id` WHERE `ashaworker`.`l_id`=%s"
@@ -813,9 +848,10 @@ def view_vaccine_details():
 @app.route("/view_vaccine_details2", methods=['post'])
 def view_vaccine_details2():
     type = request.form['select']
+
     qry = "SELECT * FROM `vaccine` JOIN `user` ON `vaccine`.`panchayath_id`=`user`.`panchayath_id` WHERE  `vaccine`.`type`=%s and user.l_id=%s"
     res = selectall2(qry, (type,session['lid']))
-    return render_template("User/view_vaccine_details.html", val=res)
+    return render_template("User/view_vaccine_details.html", val=res, t = type)
 
 
 @app.route("/forgot_password")
@@ -985,6 +1021,28 @@ def initialize_scheduler():
 @app.route('/')
 def home():
     return "Flask app with vaccine notification system"
+
+
+@app.route("/chat_with_gemini")
+def chat_with_gemini():
+    return render_template("User/chat_with_ai.html")
+
+
+@app.route('/gemini_chat', methods=['POST'])
+def gemini_chat():
+    # Get the message sent by the user
+    user_message = request.json.get('message')
+
+    if user_message:
+        # Generate AI response using Gemini AI
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(user_message)
+
+        # Return AI's response to the frontend
+        return jsonify({'reply': response.text})
+
+    return jsonify({'reply': 'Error: No message received'}), 400
+
 
 if __name__ == "__main__":
     initialize_scheduler()  # Start the scheduler when the app starts

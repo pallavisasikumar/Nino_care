@@ -66,7 +66,7 @@
     <div class="row">
         {% for i in val %}
         <div class="col-md-4"> <!-- Change this to col-lg-4 for larger screens -->
-            <a href="https://example.com/scheme-details" class="scheme-card">
+            <a href="view_scheme_details?id={{i['id']}}" class="scheme-card">
                 <div class="card scheme-card">
                     <div class="card-header">
                         {{i['scheme_name']}}

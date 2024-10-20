@@ -1,9 +1,10 @@
+
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - AgriCulture Bootstrap Template</title>
+  <title>Index - Nino Care</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -26,50 +27,59 @@
   <!-- Main CSS File -->
   <link href="../static/assets/css/main.css" rel="stylesheet">
 
+  <style>
+    .btn-primary {
+      background-color: #BDA971;
+      border: 0;
+    }
+
+    .btn-primary:hover {
+      background-color: #000000;
+    }
+
+    /* AI Chat Button Styling */
+    .ai-chat-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4a90e2;
+      color: #fff;
+      padding: 15px;
+      border-radius: 50%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      font-size: 24px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .ai-chat-btn:hover {
+      background-color: #346ec1;
+    }
+
+    .ai-chat-btn i {
+      font-size: 24px;
+    }
+  </style>
 </head>
 
 <body class="index-page">
-
-<style>
-  .btn-primary{
-  background-color:#BDA971;
-  border:0;
-  }
-  .btn-primary:hover{
-   background-color:#000000;
-  }
-</style>
 
   <header id="header" class="header d-flex align-items-center position-relative">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="user_home" class="logo d-flex align-items-center">
-
-         <h1 class="sitename">Nino care</h1>
+        <h1 class="sitename">Nino Care</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="panchayath_home" class="">Home</a></li>
-
-<!--          <li class="dropdown"><a href="#"><span>Manage</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--            <ul>-->
-
-<!--                        <li><a href="manage_area#about">Area</a></li>-->
-<!--                                  <li><a href="manage_vaccination_details#about">Vaccination Details</a></li>-->
-<!--                                  <li><a href="manage_panchayath_program#about">Panchayath Programs</a></li>-->
-<!--                                  <li><a href="manage_ashaworker#about">Ashaworker</a></li>-->
-<!--                                  <li><a href="manage_reports#about">Report</a></li>-->
-
-<!--            </ul>-->
-<!--          </li>-->
-               <li><a href="view_schemes#about">Government Schemes</a></li>
-               <li><a href="view_programs#about">Panchayath Programs</a></li>
-               <li><a href="view_vaccine_details#about">Vaccination Details</a></li>
-               <li><a href="view_food_details#about">Food details</a></li>
-               <li><a href="/">Logout</a></li>
-
-
+          <li><a href="view_schemes#about">Government Schemes</a></li>
+          <li><a href="view_programs#about">Panchayath Programs</a></li>
+          <li><a href="view_vaccine_details#about">Vaccination Details</a></li>
+          <li><a href="view_food_details#about">Food Details</a></li>
+          <li><a href="/">Logout</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -80,43 +90,38 @@
   <main class="main">
 
     <!-- Hero Section -->
-    <section id="hero" class="hero section dark-background" >
-
+    <section id="hero" class="hero section dark-background">
       <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
-
         <div class="carousel-item active">
           <img src="../static/assets/img/user.jpg" alt="">
           <div class="carousel-container">
             <h2>All love begins and ends there.</h2>
             <p>There’s no way to be a perfect mother and a million ways to be a good one.</p>
           </div>
-        </div><!-- End Carousel Item -->
-
-
-
+        </div>
         <ol class="carousel-indicators"></ol>
-
       </div>
-
-    </section><!-- /Hero Section -->
+    </section>
 
     <!-- About Section -->
     <section id="about" class="about section">
-
       <div class="content">
         <div class="container">
           <div class="row">
-
-             {% block body %}
-
-
-        {% endblock %}
-
+            {% block body %}
+            <!-- Dynamic content will be loaded here -->
+            {% endblock %}
           </div>
         </div>
       </div>
-    </section><!-- /About Section -->
+    </section>
 
+  </main>
+
+  <!-- AI Chat Button -->
+  <a href="/chat_with_gemini" class="ai-chat-btn" title="Chat with Gemini AI">
+    <i class="bi bi-chat-dots"></i>
+  </a>
 
   <!-- Vendor JS Files -->
   <script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

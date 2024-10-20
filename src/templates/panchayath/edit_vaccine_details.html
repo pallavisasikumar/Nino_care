@@ -11,24 +11,24 @@
     <tr>
       <th scope="col">Vaccine name </th>
       <th scope="col"><label>
-        <input type="text" name="textfield" value="{{val['vaccine_name']}}" />
+        <input type="text" name="textfield" value="{{val['vaccine_name']}}" required/>
       </label></th>
     </tr>
     <tr>
       <th>Details</th>
       <td><label>
-      <input type="text" name="textfield2" value="{{val['details']}}"/>
+      <input type="text" name="textfield2" value="{{val['details']}}" required/>
       </label></td>
     </tr> <tr>
       <th>Date</th>
       <td><label>
-      <input type="date" name="date" value="{{val['date']}}"/>
+      <input type="date" name="date" value="{{val['date']}}" required/>
       </label></td>
     </tr>
     <tr>
       <th>Type</th>
       <td><label>
-      <select name="textfield3">
+      <select name="textfield3" required>
         <option {% if val['type'] == "Child" %} selected {% endif %} >Child</option>
         <option {% if val['type'] == "Mother" %} selected {% endif %}>Mother</option>
         <option {% if val['type'] == "Pregnent Women" %} selected {% endif %}>Pregnent Women</option>
