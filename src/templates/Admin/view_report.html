@@ -2,60 +2,69 @@
 {% block body %}
 
 <body>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Filter Reports</h2>
+    <form action="filter_report" method="post">
+      <div class="card shadow">
+        <div class="card-body">
+          <table class="table table-bordered table-hover">
+            <!-- District Dropdown -->
+            <tr>
+              <th>District</th>
+              <td>
+                <select name="dist" id="district-select" class="form-control">
+                  <option value="">Select District</option>
+                  {% for i in val2 %}
+                  <option value="{{ i['district'] }}">{{ i['district'] }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
 
-<form action="filter_report" method="post">
+            <!-- Taluk Dropdown -->
+            <tr>
+              <th>Taluk</th>
+              <td>
+                <select id="taluk-select" class="form-control">
+                  <option value="">Select Taluk</option>
+                </select>
+              </td>
+            </tr>
 
-  <table width="200" border="1" class="table table-bordered table-hover table-striped">
-    <!-- District Dropdown -->
-    <tr>
-      <th>District</th>
-      <th colspan="2">
-        <select name="dist" id="district-select">
-          <option value="">Select District</option>
-          {% for i in val2 %}
-          <option value="{{ i['district'] }}">{{ i['district'] }}</option>
-          {% endfor %}
-        </select>
-      </th>
-    </tr>
+            <!-- Panchayath Dropdown -->
+            <tr>
+              <th>Panchayath</th>
+              <td>
+                <select id="panchayath-select" name="pid" class="form-control">
+                  <option value="">Select Panchayath</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+              </td>
+            </tr>
+          </table>
 
-    <!-- Taluk Dropdown -->
-    <tr>
-      <th>Taluk</th>
-      <th colspan="2">
-        <select id="taluk-select">
-          <option value="">Select Taluk</option>
-        </select>
-      </th>
-    </tr>
+          <!-- Panchayath Report Table -->
+          <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Report</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in val %}
+              <tr align="center">
+                <td><a href="../static/uploads/{{ i['report'] }}" class="text-primary">{{ i['report'] }}</a></td>
+                <td>{{ i['date'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
 
-    <!-- Panchayath Dropdown -->
-    <tr>
-      <th>Panchayath</th>
-      <th colspan="2">
-        <select id="panchayath-select" name="pid">
-          <option value="">Select Panchayath</option>
-        </select>
-
-        <input type="submit" value="Search">
-
-      </th>
-    </tr>
-
-    <!-- Panchayath Report Table -->
-    <tr>]
-      <th scope="col">Report</th>
-      <th scope="col">Date</th>
-    </tr>
-    {% for i in val %}
-    <tr align="center">
-      <td><a href="../static/uploads/{{ i['report'] }}"> {{ i['report'] }}</a></td>
-      <td>{{ i['date'] }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-
-  </form>
   <!-- Include jQuery for handling AJAX requests -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script type="text/javascript">

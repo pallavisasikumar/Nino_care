@@ -2,33 +2,45 @@
 {% block body %}
 
 <body>
-<form id="form1" name="form1" method="post" action="add_food_details#about">
-  <table width="200" border="1" class="table table-bordered table-hover table-striped">
-    <tr>
-      <th scope="col">Food</th>
-      <th scope="col">Details</th>
-      <th scope="col">Image</th>
-      <th scope="col">Type</th>
-      <th scope="col">&nbsp;</th>
-    </tr>
-    {% for i in val%}
-    <tr>
-      <td>{{i['food']}}</td>
-      <td>{{i['details']}}</td>
-      <td><img src="../static/uploads/{{i['image']}}" width="100px" height="100px"></td>
-      <td>{{i['type']}}</td>
-      <td><p><a href="edit_food?id={{i['id']}}#about">Edit</a></p>
-      <p><a href="delete_food?id={{i['id']}}#about">Delete</a></p></td>
-    </tr>
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Food Details</h2>
+    <form id="form1" name="form1" method="post" action="add_food_details#about">
+      <div class="card shadow">
+        <div class="card-body">
+          <table class="table table-bordered table-hover table-striped">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Food</th>
+                <th scope="col">Details</th>
+                <th scope="col">Image</th>
+                <th scope="col">Type</th>
+                <th scope="col" style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in val %}
+              <tr>
+                <td>{{ i['food'] }}</td>
+                <td>{{ i['details'] }}</td>
+                <td><img src="../static/uploads/{{ i['image'] }}" width="100px" height="100px" class="img-fluid rounded"></td>
+                <td>{{ i['type'] }}</td>
+                <td>
+                  <a href="edit_food?id={{ i['id'] }}#about" class="btn btn-warning btn-sm">Edit</a>
+                  <a href="delete_food?id={{ i['id'] }}#about" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="text-center">
+            <button type="submit" name="Submit" class="btn btn-primary">Add Food</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 
-    {% endfor %}
-
-    <tr align="center">
-      <td colspan="5"><label>
-        <input type="submit" name="Submit" value="Add" class="btn btn-primary"/>
-      </label></td>
-    </tr>
-  </table>
-</form>
+  <!-- Include jQuery for handling AJAX requests if needed -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 {% endblock %}

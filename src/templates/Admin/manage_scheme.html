@@ -2,32 +2,143 @@
 {% block body %}
 
 <body>
-<form id="form1" name="form1" method="post" action="add_scheme#about">
-  <table width="200" border="1" class="table table-bordered table-hover table-striped" >
-    <tr>
-      <th scope="col">Scheme Name </th>
-      <th scope="col">Details</th>
-      <th scope="col">Date</th>
-      <th scope="col">&nbsp;</th>
-    </tr>
-    {% for i in val %}
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Scheme Management</h2>
+    <form id="form1" name="form1" method="post" action="add_scheme#about">
+      <div class="card shadow">
+        <div class="card-body">
+          <table class="table table-bordered table-hover table-striped table-responsive">
+            <thead>
+              <tr class="animated-row">
+                <th scope="col">Scheme Name</th>
+                <th scope="col">Details</th>
+                <th scope="col">Date</th>
+                <th scope="col" style="width: 150px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in val %}
+              <tr class="animated-row">
+                <td>{{ i['scheme_name'] }}</td>
+                <td>{{ i['details'] }}</td>
+                <td>{{ i['date'] }}</td>
+                <td>
+                  <a href="edit_scheme?id={{ i['id'] }}#about" class="btn btn-sm btn-warning">Edit</a>
+                  <a href="delete_scheme?id={{ i['id'] }}#about" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+              </tr>
+              {% endfor %}
+              <tr align="center">
+                <td colspan="4">
+                  <input type="submit" name="Submit" value="ADD NEW" class="btn btn-primary animated-button" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
 
-    <tr>
-      <td>{{i['scheme_name']}}</td>
-      <td>{{i['details']}}</td>
-      <td>{{i['date']}}</td>
-      <td><p><a href="edit_scheme?id={{i['id']}}#about">Edit</a></p>
-      <p><a href="delete_scheme?id={{i['id']}}#about">Delete</a></p></td>
-    </tr>
+  <style>
+    /* General Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-    {% endfor %}
+    /* Card Style */
+    .card {
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-    <tr align="center">
-      <td colspan="4"><label>
-        <input type="submit" name="Submit" value="ADD NEW" class="btn btn-primary" />
-      </label></td>
-    </tr>
-  </table>
-</form>
+    /* Responsive Table */
+    .table-responsive {
+      width: 100%;
+      margin-bottom: 15px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Table Header Style */
+    th {
+      background-color: #007bff; /* Primary blue */
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Table Row Styles */
+    .animated-row {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .animated-row:hover {
+      background-color: #f0f8ff; /* Light blue hover */
+      transform: translateY(-3px);
+    }
+
+    /* Button Styles */
+    .btn {
+      border-radius: 5px;
+      font-size: 14px;
+      padding: 8px 12px;
+      transition: background-color 0.4s, box-shadow 0.3s;
+    }
+
+    /* Button Hover Effects */
+    .btn-primary {
+      background-color: #007bff; /* Primary blue */
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3; /* Darker blue */
+      border-color: #004085;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-warning {
+      background-color: #ffc107; /* Warning yellow */
+      border-color: #ffc107;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800; /* Darker yellow */
+      border-color: #d39e00;
+    }
+
+    .btn-danger {
+      background-color: #dc3545; /* Danger red */
+      border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333; /* Darker red */
+      border-color: #bd2130;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+      .table {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 8px; /* Reduced padding for smaller screens */
+      }
+    }
+  </style>
+
 </body>
 {% endblock %}

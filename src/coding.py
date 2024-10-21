@@ -5,11 +5,10 @@ import os
 from flask_mail import *
 from email import encoders
 import random
+import functools
 from apscheduler.schedulers.background import BackgroundScheduler
 import google.generativeai as genai
 
-
-import functools
 
 def login_required(func):
     @functools.wraps(func)
@@ -85,7 +84,7 @@ def select_taluks2():
     dist = request.args.get("dist")
     qry = "SELECT DISTINCT(`taluk_name`) FROM `panchayath` WHERE `district`=%s"
     res = selectall2(qry, dist)
-    return jsonify(res)
+    return jsonify(res) #client server communication
 
 @app.route("/user_reg_filter", methods=['POST'])
 def user_reg_filter():
@@ -150,7 +149,7 @@ def admin_home():
     return render_template("Admin/admin_index.html")
 
 
-@app.route("/add_panchayath", methods=['post'])
+@app.route("/add_panchayath")
 @login_required
 def add_panchayath():
     return render_template("Admin/add_panchayath.html")
@@ -186,7 +185,6 @@ def delete_panchayath():
 
     return '''<script>alert("Successfully deleted");window.location="manage_panchayath"</script>'''
 
-
 @app.route("/edit_panchayath")
 @login_required
 def edit_panchayath():
@@ -200,22 +198,26 @@ def edit_panchayath():
 @app.route("/update_panchayath" , methods=['post'])
 @login_required
 def update_panchayath():
-    print(request.form)
-    name = request.form["textfield"]
-    taluk_name = request.form["textfield2"]
-    district = request.form["textfield3"]
-    ph_no = request.form["textfield4"]
-    email = request.form["textfield5"]
-    username = request.form["textfield6"]
-    password = request.form["textfield7"]
+    try:
+        print(request.form)
+        name = request.form["textfield"]
+        taluk_name = request.form["textfield2"]
+        district = request.form["textfield3"]
+        ph_no = request.form["textfield4"]
+        email = request.form["textfield5"]
+        username = request.form["textfield6"]
+        password = request.form["textfield7"]
 
-    qry = "UPDATE `login` SET `username`=%s, `password`=%s WHERE `id`=%s"
-    iud(qry, (username,password,session['pid']))
+        qry = "UPDATE `login` SET `username`=%s, `password`=%s WHERE `id`=%s"
+        iud(qry, (username,password,session['pid']))
 
-    qry = "UPDATE `panchayath` SET `name`=%s, `taluk_name`=%s, `district`=%s, `ph_no`=%s, `email`=%s WHERE `l_id`=%s"
-    iud(qry, (name, taluk_name, district, ph_no, email, session['pid']))
+        qry = "UPDATE `panchayath` SET `name`=%s, `taluk_name`=%s, `district`=%s, `ph_no`=%s, `email`=%s WHERE `l_id`=%s"
+        iud(qry, (name, taluk_name, district, ph_no, email, session['pid']))
 
-    return '''<script>alert("Successfully edited");window.location="manage_panchayath"</script>'''
+        return '''<script>alert("Successfully edited");window.location="manage_panchayath"</script>'''
+    except:
+        return '''<script>alert("Email or Phone already exists");window.location="manage_panchayath"</script>'''
+
 
 
 @app.route("/insert_scheme", methods=["post"])
@@ -266,13 +268,23 @@ def add_scheme():
     return render_template("Admin/add_scheme.html")
 
 
-@app.route("/manage_panchayath")
+@app.route("/manage_panchayath", methods=['GET'])
 @login_required
 def manage_panchayath():
-    qry = "SELECT * FROM `panchayath`"
-    res = selectall(qry)
-    # print(res) (just to check if the code works)
-    return render_template("Admin/manage_panchayath.html", val = res)
+    selected_district = request.args.get('district')  # Get the selected district from query params
+    if selected_district:
+        qry = "SELECT * FROM `panchayath` WHERE `district` = %s"
+        res = selectall2(qry, (selected_district,))  # Filter by selected district
+    else:
+        qry = "SELECT * FROM `panchayath`"
+        res = selectall(qry)  # No filter, get all Panchayaths
+
+    districts = ['Thiruvananthapuram', 'Kollam', 'Pathanamthitta', 'Alappuzha', 'Kottayam',
+                 'Idukki', 'Ernakulam', 'Thrissur', 'Palakkad', 'Malappuram',
+                 'Kozhikode', 'Wayanad', 'Kannur', 'Kasaragod']  # List of districts
+
+    return render_template("Admin/manage_panchayath.html", val=res, districts=districts,
+                           selected_district=selected_district)
 
 
 @app.route("/manage_scheme")
@@ -586,9 +598,10 @@ def insert_program():
 
     name = request.form['name']
     details = request.form['details']
+    date = request.form['details']
 
-    qry = "INSERT `programs` VALUES(NULL,%s,%s,%s,%s,CURDATE())"
-    iud(qry, (session['lid'], name, prgrm_name, details))
+    qry = "INSERT `programs` VALUES(NULL,%s,%s,%s,%s,%s)"
+    iud(qry, (session['lid'], name, prgrm_name, details, date))
 
     qry = "SELECT * FROM `user` JOIN `login` ON `user`.l_id=`login`.id WHERE `user`.panchayath_id=%s AND `login`.type='user'"
     res = selectall2(qry,session['lid'])
@@ -891,8 +904,8 @@ def insert_code():
 @app.route("/verify_users")
 @login_required
 def verify_users():
-    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending'"
-    res = selectall(qry)
+    qry = "SELECT `user`.* FROM `user` JOIN `ashaworker` ON `user`.area=`ashaworker`.area JOIN `login` ON `user`.l_id=`login`.id WHERE `login`.type='pending' and ashaworker.l_id=%s"
+    res = selectall2(qry, session['lid'])
     return render_template("Ashaworker/verify_users.html", val=res)
 
 
@@ -920,7 +933,7 @@ def accept_user():
 @login_required
 def reject_user():
     id = request.args.get('id')
-    qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
+    qry = "UPDATE `login` SET TYPE='rejected' WHERE id=%s"
     iud(qry, id)
     return '''<script>alert("Rejected");window.location="verify_users"</script>'''
 
@@ -1004,12 +1017,10 @@ def view_vaccine_details2():
 
 
 @app.route("/forgot_password")
-@login_required
 def forgot_password():
     return  render_template("forgot_password.html")
 
 @app.route("/forgot_password_otp", methods=['post'])
-@login_required
 def forgot_password_otp():
     type= request.form['type']
     gmail = request.form['textfield']
@@ -1072,7 +1083,6 @@ def forgot_password_otp():
 
 
 @app.route("/verify_otp", methods=['post'])
-@login_required
 def verify_otp():
     otp = request.form['textfield']
 
@@ -1083,7 +1093,6 @@ def verify_otp():
 
 
 @app.route("/update_password", methods=['post'])
-@login_required
 def update_password():
     new_password = request.form['textfield']
     qry = "UPDATE `login` SET PASSWORD = %s where id=%s"
@@ -1104,8 +1113,6 @@ def send_vaccine_notification():
             res2 = selectall2(qry, (i['panchayath_id'],i['id']))
 
             print("=============res2", res2)
-
-
 
             for j in res2:
                 qry = "INSERT INTO `vaccine_notified_users` VALUES(NULL, %s, %s, CURDATE())"
@@ -1170,11 +1177,6 @@ def initialize_scheduler():
     # Schedule the task to run every 1 minute
     scheduler.add_job(func=send_vaccine_notification, trigger="interval", minutes=1)
     scheduler.start()
-
-@app.route('/')
-@login_required
-def home():
-    return "Flask app with vaccine notification system"
 
 
 @app.route("/chat_with_gemini")

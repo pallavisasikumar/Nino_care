@@ -1,52 +1,98 @@
 {% extends "panchayath/panchayath_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Mothers Information</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif; /* Modern font */
+            background-color: #f4f4f9; /* Light background color */
+            margin: 20px; /* Margin around the body */
+        }
+
+        .container {
+            max-width: 1000px; /* Increased max width for the container */
+            margin: auto; /* Center the container */
+            background: white; /* White background for the container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            padding: 20px; /* Padding inside the container */
+        }
+
+        h2 {
+            text-align: center; /* Center align heading */
+            color: #333; /* Dark text for the heading */
+            margin-bottom: 20px; /* Space below the heading */
+        }
+
+        .table {
+            width: 100%; /* Full width for the table */
+            border-collapse: collapse; /* Collapse borders */
+            margin-top: 20px; /* Space above the table */
+        }
+
+        th, td {
+            padding: 15px; /* Padding for table cells */
+            text-align: left; /* Align text to the left */
+            border-bottom: 1px solid #e0e0e0; /* Light border for rows */
+        }
+
+        th {
+            background-color: #6c757d; /* Header background color */
+            color: white; /* Header text color */
+            font-weight: bold; /* Bold text for headers */
+        }
+
+        tr:hover {
+            background-color: #e9ecef; /* Light hover effect for rows */
+        }
+
+        a {
+            color: #007bff; /* Link color */
+            text-decoration: none; /* No underline */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="">
-  <table  border="1" class="table table-hover table-striped">
-    <tr>
-      <th scope="row">Name</th>
-      <td>Addrerss</td>
-      <td>Area</td>
-      <td>Contact</td>
-      <td>Number of children </td>
-	  <td>Location</td>
-	  <td>Child</td>
-    </tr>
+    <div class="container">
+        <h2>Mothers Information</h2>
+        <form id="form1" name="form1" method="post" action="">
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>Address</td>
+                    <td>Area</td>
+                    <td>Contact</td>
+                    <td>Number of Children</td>
+                    <td>Location</td>
+                    <td>Child</td>
+                </tr>
 
-    {% for i in val %}
-
-    <tr>
-      <th>{{i['name']}}</th>
-      <td>
-
-        <b>Place: </b> {{i['place']}} <br>
-
-        <b>Post: </b> {{i['post']}} <br>
-        <b>Pin: </b> {{i['pin']}}
-
-      </td>
-      <td>{{i['area']}}</td>
-      <td>
-        <b>Phone: </b> {{i['ph_no']}} <br>
-        <b>Email: </b>{{i['email']}}
-
-      </td>
-      <td>{{i['no_of_child']}}</td>
-	  <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
-
-      <td><a href="panchayath_view_child_details?id={{i['l_id']}}">View</a> </td>
-
-    </tr>
-
-    {% endfor %}
-
-  </table>
-</form>
+                {% for i in val %}
+                <tr>
+                    <th>{{i['name']}}</th>
+                    <td>
+                        <b>Place: </b> {{i['place']}} <br>
+                        <b>Post: </b> {{i['post']}} <br>
+                        <b>Pin: </b> {{i['pin']}}
+                    </td>
+                    <td>{{i['area']}}</td>
+                    <td>
+                        <b>Phone: </b> {{i['ph_no']}} <br>
+                        <b>Email: </b> {{i['email']}}
+                    </td>
+                    <td>{{i['no_of_child']}}</td>
+                    <td><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></td>
+                    <td><a href="panchayath_view_child_details?id={{i['l_id']}}">View</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </div>
 </body>
-<!--</html>-->
 {% endblock %}

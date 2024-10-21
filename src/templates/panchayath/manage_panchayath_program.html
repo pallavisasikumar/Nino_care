@@ -1,36 +1,108 @@
 {% extends "panchayath/panchayath_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta charset="UTF-8">
+    <title>Manage Programs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 1200px; /* Increased max width */
+        }
+
+        .table-card {
+            background-color: #ffffff; /* White background for the card */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            padding: 20px; /* Padding inside the card */
+        }
+
+        th {
+            background-color: #007bff; /* Primary blue for headers */
+            color: white;
+            text-align: center; /* Center align header text */
+        }
+
+        tr:hover {
+            background-color: #e9ecef; /* Light gray hover effect */
+        }
+
+        .btn {
+            border-radius: 20px; /* Rounded button corners */
+        }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color */
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        .delete-link {
+            color: #dc3545; /* Danger red */
+            text-decoration: none;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .table-card {
+                padding: 10px; /* Reduce padding on smaller screens */
+            }
+        }
+    </style>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="add_program">
-  <table width="200" border="1" class="table table-hover table-striped">
-    <tr>
-      <th scope="col">Program Name</th>
-      <th scope="col">Details</th>
-      <th scope="col">Files</th>
-      <th scope="col">Publish Date</th>
-      <th scope="col">&nbsp;</th>
-    </tr>
-    {% for i in val %}
-    <tr>
-      <td>{{i['program name']}}</td>
-      <td>{{i['details']}}</td>
-      <td><a href="../static/uploads/{{i['attachment']}}">view</a> </td>
-      <td>{{i['date']}}</td>
-      <td><a href="delete_program?id={{i['id']}}">Delete</a></td>
-    </tr>
-    {% endfor %}
-    <tr align="center">
-      <td colspan="5"><label>
-        <input type="submit" name="Submit" value="Add" class="btn btn-primary" />
-      </label></td>
-    </tr>
-  </table>
-</form>
+    <div class="container">
+        <h2 class="text-center mb-4">Manage Programs</h2>
+        <div class="table-card">
+            <form id="form1" name="form1" method="post" action="add_program">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Program Name</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Files</th>
+                            <th scope="col">Publish Date</th>
+                            <th scope="col" style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td>{{ i['program name'] }}</td>
+                            <td>{{ i['details'] }}</td>
+                            <td><a href="../static/uploads/{{ i['attachment'] }}" class="btn btn-link">View</a></td>
+                            <td>{{ i['date'] }}</td>
+                            <td>
+                                <a href="delete_program?id={{ i['id'] }}" class="delete-link"><i class="fas fa-trash-alt"></i> Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr align="center">
+                            <td colspan="5">
+                                <input type="submit" name="Submit" value="Add" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-<!--</html>-->
 {% endblock %}

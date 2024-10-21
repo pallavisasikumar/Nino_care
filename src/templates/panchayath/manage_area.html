@@ -1,33 +1,86 @@
 {% extends "panchayath/panchayath_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta charset="UTF-8">
+    <title>Manage Areas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom Styles */
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 800px; /* Limit the width of the container */
+        }
+
+        table {
+            border-radius: 10px; /* Rounded corners for table */
+            overflow: hidden; /* Hide overflow to see rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        th {
+            background-color: #007bff; /* Primary blue for headers */
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1; /* Light gray hover effect */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Primary blue */
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .delete-link {
+            color: #dc3545; /* Danger red */
+            text-decoration: none;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="add_area">
-  <table width="200" border="1" class="table table-hover table-striped">
-    <tr>
-      <th scope="col">Area</th>
-      <th scope="col"></th>
-    </tr>
-    {% for i in val%}
-    <tr>
-      <td>{{i['area']}}</td>
-
-      <td><a href="delete_area?id={{i['id']}}">Delete</a> </td>
-
-    </tr>
-
-    {% endfor %}
-
-    <tr align="center">
-      <th colspan="2"><input type="submit" value="Add" class="btn btn-primary"/></th>
-    </tr>
-
-  </table>
-</form>
+    <div class="container">
+        <h2 class="text-center mb-4">Manage Areas</h2>
+        <form id="form1" name="form1" method="post" action="add_area">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Area</th>
+                        <th scope="col" style="width: 100px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in val %}
+                    <tr>
+                        <td>{{ i['area'] }}</td>
+                        <td>
+                            <a href="delete_area?id={{ i['id'] }}" class="delete-link">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr align="center">
+                        <td colspan="2">
+                            <input type="submit" value="Add" class="btn btn-primary" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-<!--</html>-->
 {% endblock %}
