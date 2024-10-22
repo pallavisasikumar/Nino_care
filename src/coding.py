@@ -1087,7 +1087,7 @@ def forgot_password_otp():
             print("Couldn't setup email!!" + str(e))
         msg = MIMEText(str(otp))
         print(msg)
-        msg['Subject'] = 'Vaccination'
+        msg['Subject'] = 'OTP'
         msg['To'] = email
         msg['From'] = 'ninocareproject@gmail.com'
         try:
