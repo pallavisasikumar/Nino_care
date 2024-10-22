@@ -598,7 +598,7 @@ def insert_program():
 
     name = request.form['name']
     details = request.form['details']
-    date = request.form['details']
+    date = request.form['date']
 
     qry = "INSERT `programs` VALUES(NULL,%s,%s,%s,%s,%s)"
     iud(qry, (session['lid'], name, prgrm_name, details, date))
@@ -926,6 +926,31 @@ def accept_user():
     id = request.args.get('id')
     qry = "UPDATE `login` SET TYPE='user' WHERE id=%s"
     iud(qry, id)
+
+    qry = "SELECT * FROM `user` WHERE `l_id`=%s"
+    res = selectone(qry, id)
+
+    def mail(email):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')
+        except Exception as e:
+            print("Couldn't setup email!!" + str(e))
+        msg = MIMEText("You have been successfully accepted by admin")
+        print(msg)
+        msg['Subject'] = 'Dear User'
+        msg['To'] = email
+        msg['From'] = 'ninocareproject@gmail.com'
+        try:
+            gmail.send_message(msg)
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+        return '''<script>alert("SEND"); window.location="/"</script>'''
+
+    mail(res['email'])
+
     return '''<script>alert("Accepted");window.location="verify_users"</script>'''
 
 
@@ -935,6 +960,31 @@ def reject_user():
     id = request.args.get('id')
     qry = "UPDATE `login` SET TYPE='rejected' WHERE id=%s"
     iud(qry, id)
+
+    qry = "SELECT * FROM `user` WHERE `l_id`=%s"
+    res = selectone(qry, id)
+
+    def mail(email):
+        try:
+            gmail = smtplib.SMTP('smtp.gmail.com', 587)
+            gmail.ehlo()
+            gmail.starttls()
+            gmail.login('ninocareproject@gmail.com', 'ioon ywiq cqkk bfaf')
+        except Exception as e:
+            print("Couldn't setup email!!" + str(e))
+        msg = MIMEText("You have been successfully rejected by admin")
+        print(msg)
+        msg['Subject'] = 'Dear User'
+        msg['To'] = email
+        msg['From'] = 'ninocareproject@gmail.com'
+        try:
+            gmail.send_message(msg)
+        except Exception as e:
+            print("COULDN'T SEND EMAIL", str(e))
+        return '''<script>alert("SEND"); window.location="/"</script>'''
+
+    mail(res['email'])
+
     return '''<script>alert("Rejected");window.location="verify_users"</script>'''
 
 

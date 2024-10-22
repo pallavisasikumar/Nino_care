@@ -1,29 +1,65 @@
 {% extends "User/user_index.html" %}
 {% block body %}
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Program Information</title>
+    <!-- Include Bootstrap CSS for modern styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add some custom spacing and layout tweaks */
+        .table-container {
+            margin: 20px auto;
+            max-width: 95%; /* Increased the max-width to 95% */
+        }
+        .table {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-view {
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            padding: 5px 10px;
+            text-decoration: none;
+        }
+        .btn-view:hover {
+            background-color: #0056b3;
+        }
+        .form-container {
+            padding: 20px;
+        }
+    </style>
 </head>
 
 <body>
-<form id="form1" name="form1" method="post" action="">
-  <table width="200" border="1" class="table table-hover table-striped table-bordered">
+    <div class="container form-container">
+        <form id="form1" name="form1" method="post" action="">
+            <div class="table-container">
+                <table class="table table-hover table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Program Name</th>
+                            <th>Details</th>
+                            <th>Files</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td>{{i['program name']}}</td>
+                            <td>{{i['details']}}</td>
+                            <td><a class="btn-view" href="../static/uploads/{{i['attachment']}}">View</a></td>
+                            <td>{{i['date']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
 
-    <tr>
-      <td>Program Name</td>
-      <td>Details</td>
-      <td>Files</td>
-      <td>Date</td>
-    </tr>
-     {% for i in val %}
-    <tr>
-      <td>{{i['program name']}}</td>
-      <td>{{i['details']}}</td>
-      <td><a href="../static/uploads/{{i['attachment']}}">View</a></td>
-      <td>{{i['date']}}</td>
-    </tr>
-    {% endfor %}
-  </table>
-</form>
+    <!-- Include Bootstrap JS and jQuery for interactivity if needed -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 {% endblock %}
